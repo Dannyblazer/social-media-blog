@@ -1,0 +1,92 @@
+{% extends 'users/base.html' %}
+
+{% block content %}
+{% include 'snippets/css/account_css.html' %}
+<form method="POST" enctype="multipart/form-data">
+  {% csrf_token %}
+  <div class="container rounded bg-white mt-5 mb-5">
+    <div class="row">
+      <div class="col-md-3 border-right">
+          <div class="form-group image-group d-flex flex-column align-items-center text-center p-3 py-5" id="id_image_group">
+            <img class="rounded-circle mt-5" width="150px" src="{{form.initial.profile_image.url}}" alt="No Profile Image yet" id="id_image_display"><span class="font-weight-bold">{{request.user.username}}</span><span class="text-black-50">{{request.user.email}}</span><span> </span></div>
+            <div class="middle">
+              <div class="text">Edit</div>
+            </div>
+            <input type="file" name="profile_image" id="id_image_file" accept="image/*" onchange="readURL(this)">
+          </div>
+        <div class="col-md-5 border-right">
+            <div class="p-3 py-5">
+              {% if success_message %}
+                <h3 style="color:green; text-align: center;">{{success_message}}</h3>
+              {% endif %}
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h4 class="text-right">Profile Settings</h4>
+                </div>
+                <div class="row mt-2">
+                    <div class="col-md-6"><label class="labels">First Name</label><input type="text" name="first_name" class="form-control" value="{{request.user.first_name}}"></div>
+                    <div class="col-md-6"><label class="labels">Last Name</label><input type="text" name="last_name" class="form-control" value="{{request.user.last_name}}" ></div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-md-12"><label class="labels">Date Of Birth</label><input type="date" class="form-control" placeholder="enter phone number" value=""></div>
+                    <div class="col-md-12"><label class="labels">Role</label><input type="text" name="role" class="form-control" placeholder="enter a tech role" value="{{request.user.role}}"></div>
+                    <div class="col-md-12"><label class="labels">Twitter</label><input type="text" class="form-control" placeholder="Twitter link" value=""></div>
+                    <div class="col-md-12"><label class="labels">Linkedln</label><input type="text" class="form-control" placeholder="Linkedln link" value=""></div>
+                    <div class="col-md-12"><label class="labels">Github</label><input type="text" class="form-control" placeholder="github link" value=""></div>
+                    <div class="col-md-12"><label class="labels">Bio</label><input type="text" name="bio" class="form-control" placeholder="Bio" value="{{request.user.bio}}"></div>
+                </div>
+              </div>
+            </div>
+          <div class="col-md-4">
+            <div class="p-3 py-5">
+              <div class="p-3 py-5">
+                <div class="d-flex flex-column">
+                  <div class="col-md-12"><label class="labels">Email</label><input type="text" name="email" class="form-control" placeholder="github link" value="{{request.user.email}}"></div>
+                  <div class="col-md-12"><label class="labels">Username</label><input type="text" name="username" class="form-control" placeholder="Bio" value="{{request.user.username}}"></div>
+                  <div class="form-check">
+                    <br>
+                    <label>
+                      <input type="checkbox" name="hide_email" id="id_input_hide_email" {% if form.initial.hide_email %}checked{%endif%}>
+                      Hide Email
+                    </label>
+                  </div>
+
+                {% for field in form %}
+                  <p>
+                {% for error in field.errors %}
+                  <p style="color: red;">{{error}}</p>
+                {% endfor %}
+                  </p>
+                {% endfor %}
+                {% if form.non_field_errors %}
+                  <p style="color: red;">{{form.non_field_errors}}</p>
+                {% endif %}
+                <div class="mt-5 text-center"><button class="btn btn-primary profile-button" type="submit">Save Profile</button></div>
+              </form>
+            </div>
+          </div>
+            <div class="d-flex flex-column">
+              <a class="m-auto text-decoration-none" href="{% url 'password_change' %}">Change Password</a>
+            </div>
+          </div>
+        </div>
+    </div>
+  </div>
+</div>
+
+<script type="text/javascript">
+  document.getElementById('id_image_group').onclick = function(event){
+      document.getElementById('id_image_file').click();
+  };
+
+  function readURL(input){
+      var reader = new FileReader();
+      
+reader.onload = function (e) {
+          $('#id_image_display')
+              .attr('src', e.target.result)
+      };
+      reader.readAsDataURL(input.files[0]);
+  }
+</script>
+
+{% endblock content %} -->

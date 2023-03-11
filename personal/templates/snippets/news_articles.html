@@ -1,0 +1,90 @@
+{% extends 'users/base.html' %}
+{% load static %}
+
+{% block content %}
+<style type="text/css">
+
+	@media (max-width: 768px) { 
+		.right-column{
+			margin-left: 0px;
+		}
+	}
+
+	@media (min-width: 768px) { 
+		.right-column{
+			margin-left: 20px;
+		}
+	}
+
+	div.blog-post-container{
+		margin-bottom: 20px;
+		width: 100%;
+	}
+	.create-post-bar{
+		background-color: rgb(240, 233, 233);
+		margin-bottom:20px;
+	}
+
+	.left-column{
+		padding:0px;
+	}
+
+	.right-column{
+		padding:0px;
+		
+	}
+	.lead{
+		font-size: 17px;
+	}
+</style>
+<div class="container">
+	<div class="row">
+
+		<!-- blog feed -->
+		<div class="left-column col-lg-7 offset-lg-1">
+
+			<!-- Top 'create post' bar -->
+			<div class="d-lg-none mb-3">
+				<div class="card m-auto d-flex flex-column p-3" id="">
+					<img class="img-fluid d-block m-auto pb-2" src="{% static 'users/blaze.png' %}" alt="Eagle No show" width="72" height="72">
+					<p class="lead">This is a form of <b>News</b> cooperative multitasking. The program is yielding control of its current context so that something else
+						can run. In this case, it allows the while loop in main() to run two instances of task() as a generator function.</p>
+					<p class="m-auto"><a class="btn btn-primary" href="{% url 'blog:create' %}">Create post</a></p>
+				</div>
+			</div>
+			<!-- end Top 'create post' bar -->
+			<!-- Blog posts-->
+			{% if blog_posts %}
+				{% for post in blog_posts %}
+					<div class="blog-post-container">
+						{% include 'blog/snippets/news_blog.html' with blog_post=post %}
+					</div>
+				{% endfor %}
+			{% else %}
+				<div class="blog-post-container">
+					{% include 'blog/snippets/news_blog.html' with query=query %}
+				</div>
+			{% endif %}
+			<!-- End Blog posts-->
+			{% include 'blog/snippets/news_blog_pagination.html' with blog_posts=blog_posts %}
+		</div>
+		<!-- end blog feed -->
+
+
+		<!-- Right 'create post' column  -->
+		<div class="right-column col-lg-3 d-lg-flex d-none flex-column">
+
+			<div class="card create-post-bar d-flex flex-column p-3">
+				<img class="img-fluid d-block m-auto pb-2" src="{% static 'users/blaze.png' %}" width="72" height="72">
+				<p class="lead">This is a form of last cooperative multitasking. The program is yielding control of its current context so that something else
+					can run. In this case, it allows the while loop in main() to run two instances of task() as a generator function.</p>
+				<p class="m-auto"><a class="btn btn-primary" href="{% url 'blog:create' %}">Create post</a></p>
+			</div>
+		
+		</div>
+		<!-- end Right 'create post' column  -->
+
+	</div>
+</div>
+
+{% endblock content %}

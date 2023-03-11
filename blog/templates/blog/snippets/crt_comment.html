@@ -1,0 +1,13 @@
+<div id="commentos">
+    <p> No {{blog_id}} . . . . </p>
+  <form id="comment-form" method="post" action="{% url 'blog:create_comment' blog_id %}" enctype="multipart/form-data">
+    {% csrf_token %}  
+      <!-- Body -->
+      <div class="form-group">
+          <textarea name="body" class="form-control" placeholder="body" required ></textarea>
+      </div>
+      <!-- Submit btn -->
+      <button id="postee" class="submit btn btn-sm btn-primary btn-block" type="submit">Post</button>
+  </form>
+
+</div>

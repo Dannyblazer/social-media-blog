@@ -1,0 +1,46 @@
+<style type="text/css">
+	.card{
+		max-width: 700px;
+	}
+	.card-body{
+		padding: 20px;
+		width: 100%;
+	}
+</style>
+{% if blog_post %}
+<div class="container">
+	<div class="row">
+
+		<!-- Blog Post -->
+		<div class="card m-auto">
+			<a href="{{blog_post.url }}">
+				<img class="card-img-top" src="{{ blog_post.urlToImage }}">
+			</a>
+			
+			<div class="card-body mt-2 mb-2">
+				<a href="{{blog_post.url}}">
+					<h2 class="card-title">{{blog_post.title}}</h2>
+				</a>
+				<p class="card-text">{{blog_post.description|truncatechars:250}}</p>
+				
+			</div>
+			<div class="card-footer text-muted">
+			  Published on {{blog_post.publishedAt}} by {{blog_post.author}}
+			</div>
+		</div>
+	</div>
+</div>
+{% else %}
+<div class="container">
+	<div class="row">
+		<div class="card m-auto">
+			<div class="card-body mt-2 mb-2">
+				<h2 class="card-title">
+					No Results
+				</h2>
+				<p class="card-text">There were no results matching your search: "{{query}}"</p>
+			</div>
+		</div>
+	</div>
+</div>
+{% endif %}

@@ -1,0 +1,266 @@
+{% extends 'users/base.html' %}
+
+{% block content %}
+{% include 'snippets/css/profile_css.html' %}
+<div class="container">
+<div class="page-inner no-page-title">
+    <!-- start page main wrapper -->
+    <div id="main-wrapper">
+        <div class="row">
+            <div class="col-lg-5 col-xl-3">
+                <div class="card card-white grid-margin">
+                    <div class="card-heading clearfix">
+                        <h4 class="card-title">User Profile</h4>
+                    </div>
+                    <div class="card-body user-profile-card mb-3">
+                        <img src="{{account.profile_image.url}}" class="user-profile-image rounded-circle" id="requestss" alt="Profile image Unavailable" />
+                        <h4 class="text-center h6 mt-2">{{account.first_name}} {{account.last_name}}</h4>
+                        <p class="text-center small">{{account.role}}</p>
+                    {% if is_self == False %}
+                        {% if request_sent == -1 and is_friend == False %}
+                            <button class="btn btn-outline-primary btn-sm" id="id_send_friend_request_btn">Add Friend <i class="fa fa-plus"></i></button>
+                        {% elif request_sent == 1  %}
+                            <div class="d-flex flex-column align-items-center pt-2 pb-2">
+							    <button class="btn btn-sm btn-danger" id="id_cancel_friend_request_btn">
+								    Cancel Friend Request
+							    </button>
+						    </div>
+                        {% elif is_friend %}
+                            <a href="{% url 'chat:chatroom' account %}" class="btn btn-outline-primary btn-sm">Message</a>
+                        {% endif %}
+                    {% else %}
+                        <a href="{% url 'users:profile' account.pk %}" class="btn btn-outline-primary btn-sm">Edit Account</a>
+                    {% endif %}
+                    </div>
+                    <hr />
+                    <div class="card-heading clearfix mt-3">
+                        <h4 class="card-title">Skillset</h4>
+                    </div>
+                    <div class="card-body mb-3">
+                        <a href="#" class="label label-success mb-2">HTML</a>
+                        <a href="#" class="label label-success mb-2">CSS</a>
+                        <a href="#" class="label label-success mb-2">Sass</a>
+                        <a href="#" class="label label-success mb-2">Bootstrap</a>
+                        <a href="#" class="label label-success mb-2">Javascript</a>
+                        <a href="#" class="label label-success mb-2">Python</a>
+                        <a href="#" class="label label-success">UI</a>
+                        <a href="#" class="label label-success">UX</a>
+                    </div>
+                    <hr />
+                    <div class="card-heading clearfix mt-3">
+                        <h4 class="card-title">About</h4>
+                    </div>
+                    <div class="card-body mb-3">
+                        <p class="mb-0">{{account.bio}}</p>
+                    </div>
+                    <hr />
+                    <div class="card-heading clearfix mt-3">
+                        <h4 class="card-title">Contact Information</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-borderless mb-0 text-muted">
+                                <tbody>
+                                    <tr>
+                                        <th scope="row">Email:</th>
+                                        <td>{{account}}</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Phone:</th>
+                                        <td>(+44) 123 456 789</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Address:</th>
+                                        <td>74 Guild Street 542B, Great North Town MT.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-7 col-xl-6">
+                {% if is_self %}
+                <div class="card card-white grid-margin">
+                    <div class="card-body">
+                        <div class="post">
+                            <textarea class="form-control" placeholder="Post" rows="4"></textarea>
+                            <div class="post-options">
+                                <a href="#"><i class="fas fa-video"></i></a>
+                                <a href="#"><i class="fa fa-music"></i></a>
+                                <button class="btn btn-outline-success" id="postee">Post</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+                <div class="profile-timeline">
+                    <ul class="list-unstyled">
+                        {% for blog_post in blog_posts %}
+                        <li class="timeline-item">
+                            <div class="card card-white grid-margin">
+                                <div class="card-body">
+                                    <div class="timeline-item-header">
+                                        <img src="{{account.profile_image.url}}" alt="User Image" />
+                                        <p>{{blog_post.author.first_name}} <span>made a post</span></p>
+                                        <small>{{blog_post.whenpublished}}</small>
+                                    </div>
+                                    <div class="timeline-item-post">
+                                        <p>{{blog_post.body}}</p>
+                                        <div class="timeline-options">
+                                            {% if request.user.is_authenticated %}
+                                               <div>
+                                                {% include "blog/snippets/blog_like.html" %}
+                                               </div>
+                                            {%else%}
+                                            <a href="{% url 'users:must_authenticate' %}"><i class="fa fa-thumbs-up"></i> Like <span class="w3-badge w3-blue">{{ blog_post.likes.count }}</a>
+                                            {%endif%}
+                                            <a href="#"><i class="fa fa-comment"></i> Comment <span class="w3-badge w3-blue">{{ blog_post.comment.count }}</a>
+                                            <a href="#"><i class="fa fa-share"></i> Share (6)</a>
+                                        </div>
+                                    {% if blog_post.comment.all %}
+                                        {% for com in blog_post.comment.all %}
+                                        <div class="timeline-comment">
+                                            <div class="timeline-comment-header">
+                                                <img src="{{com.author.profile_image.url}}" alt="Image Unavailable" />
+                                                <p>{{com.author.first_name}} <small>{{com.whenpublished}}</small></p>
+                                            </div>
+                                            <p class="timeline-comment-text">{{com.body}}</p>
+                                            </div>
+                                        {% endfor %}
+                                    {% endif %}
+                                    <textarea class="form-control" placeholder="Comment"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                      {% endfor %}
+                    </ul>
+                </div>
+            </div>
+            <div class="col-lg-12 col-xl-3">
+                <div class="card card-white grid-margin">
+                  {% if is_self != True %}
+                    {% if request_sent == 0 %}
+                    <div class="d-flex flex-row align-items-center" id="requests">
+					    <span class="friend-text align-items-center mr-2">Accept Friend Request</span>
+					    <span id="id_cancel_{{id}}" class="decline-friend-request material-icons p-1" onclick='triggerDeclineFriendRequest("{{pending_friend_request_id}}")'>cancel</span>
+  					    <span id="id_confirm_{{id}}" class="confirm-friend-request material-icons p-1" onclick='triggerAcceptFriendRequest("{{pending_friend_request_id}}")'>check</span>
+				    </div>
+                    <div class="d-flex flex-row align-items-center justify-content-center icon-container mt-3">
+						<span class="material-icons mr-2 friends-icon">contact_page</span><span class="friend-text">Friends ({{friends|length}})</span>
+					</div>
+                    {% elif is_friend %}
+                    <div class="dropdown pt-2 pb-2 m-auto">
+						<button class="btn btn-secondary dropdown-toggle friends-btn" type="button" id="id_friends_toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+						Friends
+						</button>
+						<div class="dropdown-menu" aria-labelledby="id_friends_toggle">
+							<a class="dropdown-item" href="#" onclick="removeFriend('{{id}}', onFriendRemoved)">Unfriend</a>
+						</div>
+					</div>
+                    <div class="d-flex flex-row align-items-center justify-content-center icon-container mt-3">
+						<span class="material-icons mr-2 friends-icon">contact_page</span><a href="{% url 'friend:friends-view' friend_id=id %}"><span class="friend-text">Friends ({{friends|length}})</span></a>
+					</div>
+                    {% else %}
+                    <div class="d-flex flex-row align-items-center justify-content-center icon-container mt-3">
+						<span class="material-icons mr-2 friends-icon">contact_page</span><a href="{% url 'friend:friends-view' friend_id=id %}"><span class="friend-text">Friends ({{friends|length}})</span></a>
+					</div>
+                    {% endif %}
+                  {% else %}
+                    <div class="d-flex flex-row align-items-center justify-content-center icon-container mt-3">
+						<span class="material-icons mr-2 friends-icon">contact_page</span><a href="{% url 'friend:friends-view' friend_id=id %}"><span class="friend-text">Friends ({{friends|length}})</span></a>
+					</div>
+                    <div class="d-flex flex-column pt-4">
+                        <a href="{% url 'friend:friend-requests' user_id=id %}">
+                            <div class="d-flex flex-row align-items-center justify-content-center icon-container">
+                                <span class="material-icons mr-2 person-add-icon">person_add</span><span class="friend-text">Friend Requests ({{friend_requests|length}})</span>
+                            </div>
+                        </a>
+                    </div>
+                  {% endif %}
+                </div>
+                <div class="card card-white grid-margin">
+                    <div class="card-heading clearfix">
+                        <h4 class="card-title">Some Info</h4>
+                    </div>
+                    <div class="card-body">
+                        <p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis architecto.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Row -->
+    </div>
+    <!-- end page main wrapper -->
+    
+</div>
+</div>
+<script src="https://unpkg.com/htmx.org@1.8.5"></script>
+<script>
+    document.body.addEventListener('htmx:configRequest', (e) => {
+      e.detail.headers['X-CSRFToken'] = '{{ csrf_token }}';
+      })
+</script>
+<script type="text/javascript">
+
+	// called from base_js.html
+	//preloadImage("{{profile_image|safe}}", 'id_profile_image')
+
+	function onFriendRequestSent(){
+		location.reload();
+	}
+
+	function onFriendRequestCancelled(){
+		location.reload();
+	}
+
+	function onFriendRemoved(){
+		location.reload();
+	}
+
+	function onFriendRequestAccepted(){
+		location.reload();
+	}
+
+	function onFriendRequestDeclined(){
+		location.reload();
+	}
+
+
+	var sendFriendRequestBtn = document.getElementById("id_send_friend_request_btn")
+	if (sendFriendRequestBtn != null){
+		sendFriendRequestBtn.addEventListener("click", function(){
+			sendFriendRequest("{{id}}", onFriendRequestSent)
+		})
+	}
+
+	var cancelFriendRequestBtn = document.getElementById("id_cancel_friend_request_btn")
+	if(cancelFriendRequestBtn != null){
+		cancelFriendRequestBtn.addEventListener("click", function(){
+			cancelFriendRequest("{{id}}", onFriendRequestCancelled)
+		})
+	}
+
+	var removeFriendBtn = document.getElementById("id_unfriend_btn")
+	if (removeFriendBtn != null){
+		removeFriendBtn.addEventListener("click", function(){
+			removeFriend("{{id}}", onFriendRemoved)
+		})
+	}
+
+	function triggerAcceptFriendRequest(friend_request_id){
+		acceptFriendRequest(friend_request_id, onFriendRequestAccepted)
+	}
+
+	function triggerDeclineFriendRequest(friend_request_id){
+		declineFriendRequest(friend_request_id, onFriendRequestDeclined)
+	}
+	
+</script>
+{% include "friend/remove_friend.html" %}
+{% include "friend/send_friend_request.html" %}
+{% include "friend/cancel_friend_request.html" %}
+{% include "friend/accept_friend_request.html" %}
+{% include "friend/decline_friend_request.html" %}
+{% endblock %}

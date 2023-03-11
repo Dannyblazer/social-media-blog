@@ -1,0 +1,12 @@
+<script type="text/javascript">
+    const alertBox = document.getElementById('alert-box')
+    const imgBox = document.getElementById('img-box')
+    var form = $(this);
+    var url = form.attr("action");
+
+    $.ajax({
+        type: 'POST',
+        url: url,
+        enctype: 'multipart'
+    })
+</script>

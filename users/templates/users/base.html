@@ -1,0 +1,52 @@
+{% load static %}
+<!DOCTYPE html>
+
+<link href="https://fonts.googleapis.com/css?family=Raleway:400,500,500i,700,800i" rel="stylesheet">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link href="{% static 'bootstrap/css/bootstrap.min.css' %}" rel="stylesheet" >
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!---- Include the above in your HEAD tag ------>
+
+
+<html lang="en">
+    <head>
+      
+      <title>Doxie</title>
+  
+    </head>
+    
+  <body>
+    
+    {% include 'snippets/header.html' %}
+        <!-- Body -->
+        <style type="text/css">
+    body{
+        background-color: #f2f2f2;
+         }
+          #main{
+            min-height: 100vh;
+            height: 100%;
+          }
+        </style>
+      <div id="main">
+      {% block content %}
+
+      {% endblock content %}
+      </div>
+      
+      {% include 'snippets/footer.html' %}
+
+        <!-- End Body -->
+      
+        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js" integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3" crossorigin="anonymous"></script>
+        <script src="{% static 'bootstrap/js/jquery-3.6.3.min.js' %}"></script>
+        <script src="{% static 'bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+        
+</body>
+
+  
+</html>

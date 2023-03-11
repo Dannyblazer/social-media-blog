@@ -1,0 +1,17 @@
+{% extends 'users/base.html' %}
+
+{% block content %}
+
+<div class="container">
+    <div class="d-flex flex-column">
+        <p class="m-auto">Must authenticated to view this page.</p>
+        <p class="m-auto">
+            <a href="{% url 'users:registration_view' %}">Register</a> or 
+            <a href="{% url 'users:login' %}">Login</a>
+        </p>
+    </div>
+
+
+</div>
+
+{% endblock %}

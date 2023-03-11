@@ -1,0 +1,62 @@
+{% extends 'users/base.html' %}
+
+{% block content %}
+
+<style type="text/css" >
+      
+
+  .form-signin {
+    max-width: 330px;
+    padding: 15px;
+  }
+
+  .form-signin .form-floating:focus-within {
+    z-index: 2;
+  }
+
+  .form-signin input[type="email"] {
+    margin-bottom: -1px;
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 0;
+  }
+
+  .h3{
+        text-align: center;
+    }
+
+  .form-signin input[type="text"] {
+    margin-bottom: 10px;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+  }
+  .blog-posts{
+    max-width: 500px;
+    width: 100%;
+    margin: auto;
+  }
+
+  </style>
+
+  <main class="form-signin w-100 m-auto">
+    {% if success_message %}
+      <h3 style="color:green; text-align: center;">{{success_message}}</h3>
+    {% endif %}
+    <form action="{% url 'users:server_update' serverz.id %}" method="POST">
+      {% csrf_token %}
+    <h1 class="h3 mb-3 fw-normal">Update Server</h1>
+
+    <div class="form-floating">
+      <input type="text" minlength="7" maxlength="15" size="15" pattern="^([0-9a-fA-F]{4}:){7}[0-9a-fA}{4}$" name="ip" class="form-control" id="floatingInput" value="{{ serverz.ip }}">
+      <label for="floatingInput">Server Ip</label>
+    </div>
+    <div class="form-floating">
+      <input type="number" name="port" class="form-control" id="floatingUsername" value="{{ serverz.port }}">
+      <label for="floatingUsername">Port number</label>
+    </div>
+      <button class="w-100 btn btn-lg btn-primary" type="submit">Update</button>
+    </form>
+    <br>
+  </main>
+
+{% endblock %}
+

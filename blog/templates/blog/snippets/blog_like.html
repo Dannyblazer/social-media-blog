@@ -1,0 +1,12 @@
+<div id="likesarea{{ forloop.counter0 }}">
+    
+        <a href="#" hx-post="{% url 'blog:like' blog_post.id %}"
+          hx-target="#likesarea{{ forloop.counter0 }}" hx-swap="outerHTML" >
+          {% if request.user in blog_post.likes.all %}
+          <i class="fa fa-thumbs-up"></i> Liked <span class="w3-badge w3-blue">{{ blog_post.likes.count }}
+          {% else %}
+          <i class="fa fa-thumbs-up"></i> Like <span class="w3-badge w3-blue">{{ blog_post.likes.count }}
+          {% endif %}
+        </a>
+    
+</div>
