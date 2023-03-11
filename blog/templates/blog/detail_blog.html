@@ -1,0 +1,64 @@
+{% extends 'users/base.html' %}
+
+{% block content %}
+<style type="text/css">
+    .card{
+        max-width: 700px;
+    }
+    .container{
+        padding: 20px;
+    }
+    #postee{
+        float: right;
+        margin-top: 10px;
+    }
+</style>
+
+<div class="container">
+    <div class="row">
+
+        <!-- Blog Post -->
+        <div class="card m-auto">
+        <img class="card-img-top" src="{{ blog_post.image.url }}" alt="Blog image Unavailable">
+        <div class="card-body my-2">
+            <h2 class="card-title">{{ blog_post.title }}</h2>
+                <p class="card-text">{{ blog_post.body|safe}}</p>
+                        {% if blog_post.author == request.user %}
+                            <a href="{% url 'blog:edit' blog_post.slug %}" class="btn btn-primary">Update</a>
+                        {% endif %}
+                        {% if request.user.is_authenticated %}
+                        <div>
+                           {% include 'blog/snippets/blog_like.html' %}
+                        </div>
+                        {% else %}
+                        <p><a href="{% url 'users:registration_view' %}">Log in to</a> like or comment</p>
+                    {% endif %}
+            <p class="strong">Comments: </p>
+                {% if not blog_comments %}
+                    {% include 'blog/snippets/crt_comment.html' %}
+                {% else %}
+                    {% for coms in blog_comments%}
+                        <p>{{ coms.body }}</p>
+                        <p><strong>By {{ coms.author.username }} {{ coms.whenpublished}}</strong></p>
+                    {% if coms.author == request.user %} <p><a href="{% url 'blog:delete_comment' blog_id %}">Delete</a></p> {% endif %}
+                {% endfor %}
+                {% include 'blog/snippets/crt_comment.html'%}
+            {%endif%}
+        </div>
+        <br>
+        <div class="card-footer text-muted">
+            Updated {{ blog_post.whenpublished }} by <a href="{% url 'users:profile_view' blog_post.author.username %}" >{{ blog_post.author }}</a>
+        </div>
+        </div>
+    </div>
+</div>
+<script src="https://unpkg.com/htmx.org@1.8.5"></script>
+<script>
+    document.body.addEventListener('htmx:configRequest', (e) => {
+      e.detail.headers['X-CSRFToken'] = '{{ csrf_token }}';
+      })
+  </script>
+
+{% include 'blog/snippets/commentors.html' %}
+
+{% endblock content %}

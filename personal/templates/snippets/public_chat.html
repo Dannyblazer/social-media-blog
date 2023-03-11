@@ -1,0 +1,77 @@
+{% extends 'users/base.html' %}
+
+{% block content %}
+<style type="text/css"> 
+
+.chat-log{
+	height: 500px;
+	overflow-x: hidden;
+	overflow-y: auto;
+	padding: 10px;
+	background-color: #fff;
+	font-size: 0.9em;
+	flex-direction: column-reverse;
+}
+
+</style>
+
+<div class="container">
+	<div class="d-flex flex-column">
+		<div class="d-flex chat-log">
+
+		</div>
+		<div class="d-flex chat-message-input-container">
+			<textarea id="id_chat_message_input" class="flex-grow-1 chat-message-input"></textarea>
+			<button class="btn btn-primary chat-message-submit-button">
+				<span id="id_chat_message_submit" class="material-icons">send
+				</span>
+			</button>
+		</div>
+	</div>
+</div>
+
+<script type="text/javascript">
+
+	function setupPublicChatWebSocket(){
+		// ws:// or wss://
+		var ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
+		{% if debug_mode %}
+			var ws_path = ws_scheme + "://" + window.location.host + "/public_chat/{{room_id}}/" // development
+		{% else %}
+			var ws_path = ws_scheme + "://" + window.location.host + ":8001/public_chat/{{room_id}}/" // Production
+		{% endif %}
+
+		var public_chat_socket = new WebSocket(ws_path)
+
+		// handle incoming messages
+		public_chat_socket.onmessage = function(message){
+			console.log("Got chat websocket message: " + message.data)
+		}
+
+		public_chat_socket.addEventListener("open", function(e){
+			console.log("public chat socket OPEN")
+		})
+
+		public_chat_socket.onclose = function(e){
+			console.log("Public chat socket CLOSED.")
+		}
+
+		public_chat_socket.onopen = function(e){
+			console.log("Public chat socket Onopen")
+		}
+		public_chat_socket.onerror = function(e){
+			console.log("Public chat socket error: " + str(e))
+		}
+
+		if(public_chat_socket.readyState == WebSocket.OPEN){
+			console.log("Public Chat Socket OPEN")
+		}
+		else if (public_chat_socket.readyState == WebSocket.CONNECTING){
+			console.log("Public Chat Socket CONNECTING...")
+		}
+	}
+console.log("Javascript is working!")
+</script>
+
+{% endblock  %}
+
