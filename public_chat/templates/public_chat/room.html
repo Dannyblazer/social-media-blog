@@ -1,0 +1,239 @@
+{% extends 'users/base.html' %}
+{% load static %}
+
+{% block content %}
+<style type="text/css">
+.chat-log {
+	height: 500px;
+	overflow-x: hidden;
+	overflow-y: auto;
+	padding: 10px;
+	background-color: #fff;
+	font-size: 0.9em;
+	flex-direction: column-reverse;
+}
+.profile-image{
+	width: 33px;
+	height: 33px;
+	margin-top: 0px;
+	margin-bottom: auto;
+}
+.profile-image:hover{
+	cursor: pointer;
+}
+.username-span{
+	font-weight: 700;
+	margin-top: 0px;
+	margin-bottom: auto;
+	margin-left: 5px;
+	margin-right: 5px;
+}
+.username-span:hover{
+	cursor: pointer;
+}
+.timestamp-span{
+	font-weight: 400;
+	font-size: 0.8em;
+	color: var(--secondery-text-color);
+}
+.timestamp-span:hover{
+	cursor: pointer;
+}
+.msg-p{
+	font-weight: 370;
+	margin-top: 5px;
+	margin-bottom: auto;
+	margin-left: 5px;
+	margin-right: 5px;
+	white-space: normal;
+	-ms-word-break: break-all;
+	word-break: break-all;
+}
+.message-container{
+	margin-top: 10px;
+	justify-content: start;
+}
+</style>
+
+	<div class="container">
+		<div class="d-flex flex-column">
+			<div class="d-flex chat-log" id="id_chat_log">
+
+			</div>
+			<div class="d-flex chat-message-input-container">
+				<textarea class="flex-grow-1 chat-message-input" id="id_chat_message_input"></textarea>
+				<button class="btn btn-primary chat-message-submit-button">
+					<span {% if user.is_authenticated %}
+					id="id_chat_message_submit" 
+					{% endif %} class="material-icons">send
+					</span>
+				</button>
+		</div>
+	</div>
+</div>
+
+<script type="text/javascript">
+	setupPublicChatWebSocket()
+	function setupPublicChatWebSocket(){
+
+	// Correctly decide between ws:// and wss://
+	var ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
+	{% if debug_mode %}
+		var ws_path = ws_scheme + '://' + window.location.host + "/public_chat/"; // development
+	{% else %}
+		var ws_path = ws_scheme + '://' + window.location.host + ":8001/public_chat"; // production
+	{% endif %}
+
+	var public_chat_socket = new WebSocket(ws_path);
+
+	// Handle incoming messages
+	public_chat_socket.onmessage = function(message){
+		var data = JSON.parse(message.data)
+		if(data.error){
+			showClientErrorModal(data.message)
+		}
+		if(data.msg_type== 0){
+		appendChatMessage(data)
+		}
+	}
+	public_chat_socket.addEventListener("open", function(e){
+		console.log("Public chat Socket OPEN")
+	})
+	public_chat_socket.onclose = function(e){
+		console.log("Public Chat SOcket CLOSED.")
+	}
+	public_chat_socket.onopen = function(e){
+		console.log("Public Chat Socket: OnOpen.")
+	}
+	public_chat_socket.onerror = function(e){
+		console.log("Public Chat Socket Error: ")
+	}
+
+	if(public_chat_socket.readyState == WebSocket.OPEN){
+		console.log("Public Chat Socket open.")
+	}
+	else if(public_chat_socket.readyState == WebSocket.CONNECTING){
+		console.log("Public Chat Socket CONNECTING")
+	}
+	document.getElementById("id_chat_message_input").focus()
+	document.getElementById("id_chat_message_input").onkeyup = function(e){
+		if(e.keyCode == 13 && e.shiftKey){
+			// Handled automatically by the textarea
+		}
+		else if(e.keyCode == 13 && !e.shiftKey){
+			document.getElementById("id_chat_message_submit").click()
+		}
+	}
+	document.getElementById("id_chat_message_submit").onclick = function(e){
+		const messageInputDom = document.getElementById("id_chat_message_input")
+		const message = messageInputDom.value
+		public_chat_socket.send(JSON.stringify({
+			"command": "send",
+			"message": message
+		}))
+		messageInputDom.value = ""
+	}
+
+}
+
+function appendChatMessage(data){
+	message = data['message']
+	var uName = data['username']
+	user_id = data['user_id']
+	profile_image = data['profile_image']
+	timestamp = data['naturalday']
+
+	var msg = message + "\n"
+	var username = uName + ": "
+	createChatMessageElement(msg, username, profile_image, user_id, timestamp)
+}
+function createChatMessageElement(msg, username, profile_image, user_id, timestamp){
+		var chatlog = document.getElementById("id_chat_log")
+
+		var newMessageDiv = document.createElement("div")
+		newMessageDiv.classList.add("d-flex")
+		newMessageDiv.classList.add("flex-row")
+		newMessageDiv.classList.add("message-container")
+
+		var profileImage = document.createElement("img")
+		profileImage.addEventListener("click", function(e){
+			selectUser(username)
+		})
+		profileImage.classList.add("profile-image")
+		profileImage.classList.add("rounded-circle")
+		profileImage.classList.add("img-fluid")
+		profileImage.src = profile_image
+		newMessageDiv.appendChild(profileImage)
+
+		var div1 = document.createElement("div")
+		div1.classList.add("d-flex")
+		div1.classList.add("flex-column")
+
+		var div2 = document.createElement("div")
+		div2.classList.add("d-flex")
+		div2.classList.add("flex-row")
+
+		var usernameSpan = document.createElement("span")
+		usernameSpan.addEventListener("click", function(e){
+			selectUser(username)
+		})
+		usernameSpan.innerHTML = username
+		usernameSpan.classList.add("username-span")
+		div2.appendChild(usernameSpan)
+
+		var timestampSpan = document.createElement("span")
+		timestampSpan.innerHTML = timestamp
+		timestampSpan.classList.add("timestamp-span")
+		timestampSpan.classList.add("d-flex")
+		timestampSpan.classList.add("align-items-center")
+		timestampSpan.addEventListener("click", function(e){
+			selectUser(user_id)
+		})
+		div2.appendChild(timestampSpan)
+
+		div1.appendChild(div2)
+
+		var msgP = document.createElement("p")
+		msgP.innerHTML = msg
+		msgP.classList.add("msg-p")
+		div1.appendChild(msgP)
+
+		newMessageDiv.appendChild(div1)
+		chatlog.insertBefore(newMessageDiv, chatlog.firstChild)
+	}
+	function selectUser(uName){
+		var url = "{% url 'users:profile_view' 5458468488 %}".replace("5458468488", uName)
+		var win = window.open(url, "_blank")
+		win.focus()
+	}
+
+	function setConnectedUsersCount(count){
+		element = document.getElementById("id_connected_users")
+		element.innerHTML = count
+	}
+
+</script>
+<!-- Client Error MODAL -->
+<button type="button" id="id_trigger_client_error_modal" class="d-none btn btn-primary" data-toggle="modal" data-target="#id_client_error_modal">
+</button>
+<div class="modal fade" id="id_client_error_modal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Socket Client Error</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p id="id_client_error_modal_body">Something went wrong.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal" id="id_client_error_modal_close_btn">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Client Error MODAL -->
+
+{% endblock %}

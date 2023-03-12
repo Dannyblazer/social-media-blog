@@ -6,7 +6,7 @@
 	<!-- MEDIUM+ SCREENS -->
 	<div class="d-none d-md-flex flex-row my-auto flex-grow-1 align-items-center">
 		<h5 class="mr-3 font-weight-normal justify-content-start" id="homee">
-			<a id="head" class="p-2 text-dark" href="{% url 'personal:public_chat' %}">Home</a>
+			<a id="head" class="p-2 text-dark" href="{% url 'public_chat:room' %}">Home</a>
 		</h5>
 		{% if is_home %}
 		<form method="GET" class="search-bar justify-content-start">

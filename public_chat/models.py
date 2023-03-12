@@ -42,7 +42,7 @@ class PublicChatRoom(models.Model):
 
 class PublicRoomChatMessagesManager(models.Manager):
     def by_room(self, room):
-        qs = PublicRoomChatMessages.objects.filter(room=room).order_by("-timestamp")
+        qs = PublicRoomChatMessage.objects.filter(room=room).order_by("-timestamp")
         return qs
 
 class PublicRoomChatMessage(models.Model):

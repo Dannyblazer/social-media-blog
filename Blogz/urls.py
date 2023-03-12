@@ -24,9 +24,9 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('account/', include('users.urls')),
     path('blog/', include('blog.urls')),
-    path("chat/", include('chat.urls')),
     path("friend/", include('friend.urls')),
     path('news/', include('personal.urls')),
+    path('public_chat/', include('public_chat.urls')),
 
     # REST FRAMEWORK URLS
     path('api/blog/', include('blog.api.urls', 'blog_api')),

@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-1iymg#b-c^ykt*j*uez5y@yps#9h^mj1%d%)1*b7-0iciuu+83
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1',]
+ALLOWED_HOSTS = []
 
 if DEBUG:
     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend' # During development only
@@ -34,12 +34,14 @@ if DEBUG:
 # Application definition
 
 INSTALLED_APPS = [
+    'daphne',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.humanize',
     'django_htmx',
     'channels',
 
@@ -75,7 +77,7 @@ ROOT_URLCONF = 'Blogz.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -108,7 +110,6 @@ AUTHENTICATION_BACKENDS = (
 
 WSGI_APPLICATION = 'Blogz.wsgi.application'
 
-ASGI_APPLICATION = 'Blogz.routing.asgi.application'
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
@@ -118,7 +119,7 @@ CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 DB_NAME = "django_chatapp"
 DB_USER = "django"
-DB_PASSWORD = "chocolateboy"
+DB_PASSWORD = "Chocolateboy"
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
@@ -129,12 +130,12 @@ DATABASES = {
         'PORT': '5432',
     }
 }
-
+ASGI_APPLICATION = 'Blogz.asgi.application'
 CHANNEL_LAYERS = {
 	"default": {
 		"BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
-            'hosts':['127.0.0.1', '6379'],
+            'hosts':[('127.0.0.1', 6379)],
         },
 	},
 }
