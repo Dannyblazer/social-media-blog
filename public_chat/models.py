@@ -40,11 +40,6 @@ class PublicChatRoom(models.Model):
         """
         return f"PublicChatRoom-{self.id}"
 
-class PublicRoomChatMessagesManager(models.Manager):
-    def by_room(self, room):
-        qs = PublicRoomChatMessage.objects.filter(room=room).order_by("-timestamp")
-        return qs
-
 class PublicRoomChatMessage(models.Model):
     """
     Chat message created by a user inside a PublicChatRoom (foreign key)
@@ -58,4 +53,8 @@ class PublicRoomChatMessage(models.Model):
         return self.content
 
 
+class PublicRoomChatMessagesManager(models.Manager):
+    def by_room(self, room):
+        qs = PublicRoomChatMessage.objects.filter(room=room).order_by("-timestamp")
+        return qs
 
