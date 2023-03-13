@@ -26,7 +26,7 @@
 							    </button>
 						    </div>
                         {% elif is_friend %}
-                            <a href="{% url 'chat:chatroom' account %}" class="btn btn-outline-primary btn-sm">Message</a>
+                            <a href="{#% url 'chat:chatroom' account %#}" class="btn btn-outline-primary btn-sm">Message</a>
                         {% endif %}
                     {% else %}
                         <a href="{% url 'users:profile' account.pk %}" class="btn btn-outline-primary btn-sm">Edit Account</a>

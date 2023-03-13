@@ -4,6 +4,7 @@ from django.contrib.auth import login as dj_login, authenticate, logout
 from users.forms import RegistrationForm, AccountAuthenticationForm, AccountUpdateForm, ServerRegistrationForm
 from django.contrib import messages
 from django.template import loader
+from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from .models import Account, Server
 from friend.models import FriendList, FriendRequest
@@ -68,59 +69,78 @@ def logout_view(request):
     logout(request)
     return redirect('home')
 
-def account_view(request, *args, **kwargs):
-    context = {}
-    username = kwargs.get("username")
-    acct = get_object_or_404(Account, username=username)
-    blog_posts = BlogPost.objects.filter(author=acct).all()
-    server_list = Server.objects.filter(account=acct)
-    # acc = Account.objects.get(email=acct.email)
-    if acct:
-        try:
-            friend_list = FriendList.objects.get(user=acct)
-        except FriendList.DoesNotExist:
-            friend_list = FriendList(user=acct)
-            friend_list.save()
 
-        # Define template variables
-        friends = friend_list.friends.all()
-        is_self = True
-        is_friend = False
-        request_sent = FriendRequestStatus.NO_REQUEST_SENT.value
-        friend_requests = None
-        user = request.user
-        if user.is_authenticated and user != acct:
-            is_self = False
-            if friends.filter(pk=user.pk):
-                is_friend = True
-            else:
-            # Case1: Request has been sent from THEM to YOU
-                if get_friend_request_or_false(sender=acct, receiver=user) != False:
-                    request_sent = FriendRequestStatus.THEM_SENT_TO_YOU.value
-                    context['pending_friend_request_id'] = get_friend_request_or_false(sender=acct, receiver=user).id
-                # Case2: Request has been sent from YOU to THEM
-                elif get_friend_request_or_false(sender=user, receiver=acct) != False:
-                    request_sent = FriendRequestStatus.YOU_SENT_TO_THEM.value
-            # Case3: No request sent
-                else:
-                    request_sent = FriendRequestStatus.NO_REQUEST_SENT.value
-        elif not user.is_authenticated:
-            is_self = False
+@login_required
+def account_view(request, username):
+    acct = get_object_or_404(Account, username=username)
+    blog_posts = BlogPost.objects.filter(author=acct)
+    server_list = Server.objects.filter(account=acct)
+
+    # Friend list
+    friend_list, created = FriendList.objects.get_or_create(user=acct)
+
+    # Define template variables
+    friends = friend_list.friends.all()
+    is_self = request.user == acct
+    is_friend = friends.filter(pk=request.user.pk).exists()
+    request_sent = FriendRequestStatus.NO_REQUEST_SENT.value
+    friend_requests = None
+
+    if not is_self:
+        if is_friend:
+            request_sent = FriendRequestStatus.ALREADY_FRIENDS.value
+        elif get_friend_request_or_false(sender=acct, receiver=request.user):
+            request_sent = FriendRequestStatus.THEM_SENT_TO_YOU.value
+            pending_friend_request_id = get_friend_request_or_false(sender=acct, receiver=request.user).id
+        elif get_friend_request_or_false(sender=request.user, receiver=acct):
+            request_sent = FriendRequestStatus.YOU_SENT_TO_THEM.value
         else:
-            try:
-                friend_requests = FriendRequest.objects.filter(receiver=user, is_active=True).all()
-            except:
-                pass
-        context['id'] = acct.id
-        context['is_self'] = is_self
-        context['is_friend'] = is_friend
-        context['friends'] = friends
-        context['request_sent'] = request_sent
-        context['friend_requests'] = friend_requests
-        context['account'] = acct
-        context["blog_posts"] = blog_posts
-        context['server_list'] = server_list
-        return render(request, "users/profile.html", context)
+            request_sent = FriendRequestStatus.NO_REQUEST_SENT.value
+
+    if is_self:
+        try:
+            friend_requests = FriendRequest.objects.filter(receiver=request.user, is_active=True)
+        except FriendRequest.DoesNotExist:
+            pass
+
+    context = {
+        'id': acct.id,
+        'is_self': is_self,
+        'is_friend': is_friend,
+        'friends': friends,
+        'request_sent': request_sent,
+        'friend_requests': friend_requests,
+        'account': acct,
+        'blog_posts': blog_posts,
+        'server_list': server_list
+    }
+
+    if request.method == 'POST':
+        action = request.POST.get('action')
+        if action == 'send_request':
+            FriendRequest.objects.create(sender=request.user, receiver=acct)
+            messages.success(request, f'Friend request sent to {acct.username}.')
+            return render(request, "users/profile.html", context)
+
+        if action == 'cancel_request':
+            FriendRequest.objects.filter(sender=request.user, receiver=acct).delete()
+            messages.success(request, f'Friend request to {acct.username} has been canceled.')
+            return render(request, "users/profile.html", context)
+
+        if action == 'accept_request':
+            friend_request = FriendRequest.objects.get(pk=request.POST.get('request_id'))
+            friend_list.add(friend_request.sender)
+            friend_request.delete()
+            messages.success(request, f"You are now friends with {friend_request.sender.username}.")
+            return render(request, "users/profile.html", context)
+
+        if action == 'reject_request':
+            friend_request = FriendRequest.objects.get(pk=request.POST.get('request_id'))
+            friend_request.delete()
+            messages.success(request, f"Friend request from {friend_request.sender.username} has been rejected.")
+            return render(request, "users/profile.html", context)
+
+    return render(request, "users/profile.html", context)
 
 def must_authenticate_view(request):
     return render(request, "users/must_authenticate.html", context={})
@@ -251,17 +271,3 @@ def account_search_view(request, *args, **kwargs):
         
 
     return render(request, "users/search_results.html", context)
-
-
-'''def follow(request, pk):
-    if not request.user.is_authenticated:
-        return redirect('users:must_authenticate')
-    instance = Account.objects.get(pk=pk)
-    if not request.user in instance.profile.follows.all():
-        instance.profile.follows.add(request.user)
-        instance.save()
-        return render(request, 'snippets/follow.html', context={'user':instance})
-    else:
-        instance.profile.follows.remove(request.user)
-        instance.save()
-        return render(request, 'snippets/follow.html', context={'user':instance})'''
