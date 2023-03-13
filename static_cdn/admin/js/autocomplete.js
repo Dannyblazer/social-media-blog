@@ -27,7 +27,9 @@
         $('.admin-autocomplete').not('[name*=__prefix__]').djangoAdminSelect2();
     });
 
-    document.addEventListener('formset:added', (event) => {
-        $(event.target).find('.admin-autocomplete').djangoAdminSelect2();
-    });
+    $(document).on('formset:added', (function() {
+        return function(event, $newFormset) {
+            return $newFormset.find('.admin-autocomplete').djangoAdminSelect2();
+        };
+    })(this));
 }
