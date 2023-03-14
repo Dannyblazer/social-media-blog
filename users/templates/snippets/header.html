@@ -25,8 +25,8 @@
 						<div class="d-flex flex-row">
 
 							<div class="btn-group dropleft">
-								<div class="d-flex notifications-icon-container rounded-circle align-items-center mr-3" id="id_chat_notification_dropdown_toggle" data-toggle="dropdown">
-									<span id="id_chat_notifications_count" class="notify-badge">1</span>
+								<div class="d-flex notifications-icon-container rounded-circle align-items-center mr-3" id="id_chat_notification_dropdown_toggle" data-bs-toggle="dropdown">
+									<span id="id_chat_notifications_count" class="notify-badge"></span>
 									<span class="d-flex material-icons notifications-material-icon m-auto align-items-center">chat</span>
 									<div class="dropdown-menu scrollable-menu" aria-labelledby="id_chat_notification_dropdown_toggle" id="id_chat_notifications_container">
 									</div>
@@ -34,7 +34,7 @@
 							</div>
 
 							<div class="btn-group dropleft">
-								<div class="d-flex notifications-icon-container rounded-circle align-items-center mr-3" id="id_notification_dropdown_toggle" data-toggle="dropdown" onclick="setGeneralNotificationsAsRead()">
+								<div class="d-flex notifications-icon-container rounded-circle align-items-center mr-3" id="id_notification_dropdown_toggle" data-bs-toggle="dropdown" onclick="setGeneralNotificationsAsRead()">
 									<span id="id_general_notifications_count" class="notify-badge"></span>
 									<span class="d-flex material-icons notifications-material-icon m-auto align-items-center">notifications</span>
 									<div class="dropdown-menu scrollable-menu" aria-labelledby="id_notification_dropdown_toggle" id="id_general_notifications_container">					
@@ -75,7 +75,7 @@
 				<div class="dropdown dropleft p-2 mt-2">
 					<div class="d-flex flex-row">
 						<div class="btn-group dropleft">
-							<img class="account-image rounded-circle m-auto d-block dropdown-toggle" id="id_profile_links" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" src="{{request.user.profile_image.url}}" alt="codingwithmitch logo" width="40" height="40">
+							<img class="account-image rounded-circle m-auto d-block dropdown-toggle" id="id_profile_links" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" src="{{request.user.profile_image.url}}" alt="codingwithmitch logo" width="40" height="40">
 							<div class="dropdown-menu" aria-labelledby="id_profile_links">
 								<a class="dropdown-item" href="#">Account</a>
 							</div>
@@ -93,6 +93,10 @@
 </div>
 
 <script type="text/javascript">
+	setupChatDropdownHeader()
+	var this_id = $(this).attr('id');
+
+
 	function executeQuery(){
 		var home = "{{is_home}}";
 		var query = document.getElementById("id_q_small").value;
@@ -101,6 +105,35 @@
 		}
 		window.location.replace("{% url 'users:search' %}?q=" + query);
 		return false
+	}
+
+	function setupChatDropdownHeader(){
+		var notificationContainer = document.getElementById("id_chat_notifications_container")
+
+		if(notificationContainer != null){
+			var div = document.createElement("div")
+			div.classList.add("chat-dropdown-header", "d-flex", "flex-row", "justify-content-end", "m-auto", "align-items-end")
+			div.addEventListener("click", function(e){
+				var url = "{% url 'chat:private-chatroom' %}"
+				chatRedirect(url)
+			})
+
+			span1 = document.createElement("span")
+			span1.classList.add("mr-2")
+			span1.innerHTML = "Go to chat"
+			div.appendChild(span1)
+
+			span2 = document.createElement("span")
+			span2.classList.add("material-icons", "mr-2")
+			span2.innerHTML = "open_with"
+			div.appendChild(span2)
+
+			notificationContainer.appendChild(div)
+		}
+	}
+
+	function chatRedirect(url){
+		window.location.href = url
 	}
 </script>
 
