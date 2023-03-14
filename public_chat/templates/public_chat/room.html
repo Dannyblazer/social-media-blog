@@ -14,7 +14,7 @@ PUBLIC CHAT
 					<h3>Public Chat</h3>
 					<div class="d-flex flex-row align-items-center">
 						<span class="material-icons m-auto pr-1 connected-users-count ">person_outline</span>
-						<span class="m-auto connected-users" id="id_connected_users">1</span>
+						<span class="m-auto connected-users" id="id_connected_users">0</span>
 					</div>
 				</div>
 			</div>
@@ -46,7 +46,7 @@ PUBLIC CHAT
 	{% include 'public_chat/snippets/sockets.html' %}
 </script>
 <!-- Client Error MODAL -->
-<button type="button" id="id_trigger_client_error_modal" class="d-none btn btn-primary" data-toggle="bs-modal" data-target="#id_client_error_modal">
+<button type="button" id="id_trigger_client_error_modal" class="d-none btn btn-primary" data-bs-toggle="bs-modal" data-target="#id_client_error_modal">
 </button>
 <div class="modal fade" id="id_client_error_modal" tabindex="-1" role="dialog">
   <div class="modal-dialog" role="document">
