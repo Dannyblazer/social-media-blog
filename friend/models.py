@@ -1,6 +1,7 @@
 from django.db import models
 from django.conf import settings
 from django.utils import timezone
+from chat.utils import find_or_create_private_chat
 # Create your models here.
 
 class FriendList(models.Model):
@@ -14,11 +15,21 @@ class FriendList(models.Model):
         """ Add a new friend """
         if not account in self.friends.all():
             self.friends.add(account)
+            
+            chat = find_or_create_private_chat(self.user, account)
+            if not chat.is_active:
+                chat.is_active = True
+                chat.save()
     
     def remove_friend(self, account):
         """ Remove a friend """
         if account in self.friends.all():
             self.friends.remove(account)
+
+            chat = find_or_create_private_chat(self.user, account)
+            if chat.is_active:
+                chat.is_active = False
+                chat.save()
     
     def unfriend(self, removee):
         """ Initiate the action of unfriending someone """
