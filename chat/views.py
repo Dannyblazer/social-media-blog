@@ -36,3 +36,4 @@ def private_chat_room(request, *args, **kwargs):
 
     return render(request, 'chat/chat.html', context)
     
+    
