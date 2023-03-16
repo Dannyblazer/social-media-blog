@@ -49,7 +49,7 @@ class PublicChatConsumer(AsyncJsonWebsocketConsumer):
                     payload = json.loads(payload)
                     await self.send_messages_payload(payload['messages'], payload['new_page_number'])
                 else:
-                    raise ClientError(204, "Something went wrong retrivuing chatroom messages.")
+                    raise ClientError(204, "Something went wrong retriving chatroom messages.")
                 await self.display_progress_bar(False)
         except ClientError as e:
             await self.display_progress_bar(False)
@@ -136,6 +136,7 @@ class PublicChatConsumer(AsyncJsonWebsocketConsumer):
                 "connected_user_count": num_connected_users
             }
         )
+        print("Someone joined: " + str(num_connected_users))
 
     async def handle_client_error(self, e):
         """Called when clientError is raised. Send err to UI"""
@@ -172,6 +173,7 @@ class PublicChatConsumer(AsyncJsonWebsocketConsumer):
                 "connected_user_count": num_connected_users
             }
         )
+        print("Someone left: " + str(num_connected_users))
 
     async def display_progress_bar(self, is_displayed):
         """Payload sent whenever there's a message payload being sent"""
@@ -180,6 +182,7 @@ class PublicChatConsumer(AsyncJsonWebsocketConsumer):
         })
 
     async def connected_user_count(self, event):
+        print("function Called!")
         """Called to send the number of connected users to the group chat"""
         await self.send_json({
             "msg_type": MSG_TYPE_CONNECTED_USER_COUNT,

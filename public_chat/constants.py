@@ -4,6 +4,3 @@ MSG_TYPE_CONNECTED_USER_COUNT = 1 # user to initialize the number of connected u
 
 MSG_TYPE_ENTER = 0
 MSG_TYPE_LEAVE = 0
-
-def LazyAccountEncoder():
-    pass

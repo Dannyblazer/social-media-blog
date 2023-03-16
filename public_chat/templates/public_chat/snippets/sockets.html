@@ -24,8 +24,9 @@
 		if(data.msg_type== 0){
 		appendChatMessage(data, true, true)
 		}
-		else if(data.msg_type == 1){
+		if(data.msg_type == 1){
 			setConnectUsersCount(data.connected_user_count)
+			console.log("msg_type triggered")
 		}
 		if(data.messages_payload){
 			handleMessagesPayload(data.messages, data.new_page_number)
@@ -199,6 +200,7 @@ function createChatMessageElement(msg, msg_id, username, profile_image, user_id,
 		preloadImage(profile_image, profile_image_id)
 	}
 	function selectUser(uName){
+		var uName = uName.slice(0,-2)
 		var url = "{% url 'users:profile_view' 5458468488 %}".replace("5458468488", uName)
 		var win = window.open(url, "_blank")
 		win.focus()
