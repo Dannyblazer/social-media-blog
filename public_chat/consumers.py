@@ -136,7 +136,6 @@ class PublicChatConsumer(AsyncJsonWebsocketConsumer):
                 "connected_user_count": num_connected_users
             }
         )
-        print("Someone joined: " + str(num_connected_users))
 
     async def handle_client_error(self, e):
         """Called when clientError is raised. Send err to UI"""
