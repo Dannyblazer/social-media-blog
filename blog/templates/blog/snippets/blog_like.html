@@ -1,12 +1,15 @@
-<div id="likesarea{{ forloop.counter0 }}">
+<div class="d-flex flex-row commentz" id="likesarea{{ forloop.counter0 }}">
     
         <a href="#" hx-post="{% url 'blog:like' blog_post.id %}"
           hx-target="#likesarea{{ forloop.counter0 }}" hx-swap="outerHTML" >
           {% if request.user in blog_post.likes.all %}
-          <i class="fa fa-thumbs-up"></i> Liked <span class="w3-badge w3-blue">{{ blog_post.likes.count }}
+          <i class="fa fa-thumbs-up"></i> <span class="w3-badge w3-blue">{{ blog_post.likes.count }}
           {% else %}
-          <i class="fa fa-thumbs-up"></i> Like <span class="w3-badge w3-blue">{{ blog_post.likes.count }}
+          <i class="fa fa-thumbs-up"></i> <span class="w3-badge w3-grey">{{ blog_post.likes.count }}
           {% endif %}
         </a>
+        <div class="d-flex flex-row smallie">
+          <i class="fa fa-comments"></i> <span class="w3-badge w3-grey">{{ blog_post.comment.count }}
+        </div>
     
 </div>

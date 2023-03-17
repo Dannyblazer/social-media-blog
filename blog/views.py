@@ -29,13 +29,14 @@ def create_blog_view(request):
 
 	return render(request, 'blog/create.html', context)
 
+
 def detail_blog_view(request, slug):
 
 	context = {}
 	blog_post = get_object_or_404(BlogPost, slug=slug)
 	blog_comments = blog_post.comment.all()
 	context['blog_post'] = blog_post
-	context['blog_id'] = blog_post.pk
+	context['blog_id'] = blog_post.id
 	context['blog_comments'] = blog_comments
 	return render(request, 'blog/detail_blog.html', context)
 
@@ -116,4 +117,4 @@ def delete_comment(request, blog_id):
     blog_post = get_object_or_404(BlogPost, pk=blog_id)
     comment = get_object_or_404(Comment, author=request.user, blogpost=blog_post)
     comment.delete()
-    return HttpResponseRedirect(reverse('blog:detail', kwargs={'pk': blog_post.pk}))
+    return redirect('blog:detail', slug=blog_post.slug)

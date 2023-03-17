@@ -12,6 +12,19 @@
         float: right;
         margin-top: 10px;
     }
+    .commentz{
+        font-size: large;
+        padding-bottom: 5px;
+    }
+    .form-group{
+        margin-top: 5px;
+    }
+    a:link,
+    a:visited,
+    a:hover,
+    a:active {
+      text-decoration: none;
+    }
 </style>
 
 <div class="container">
@@ -19,7 +32,7 @@
 
         <!-- Blog Post -->
         <div class="card m-auto">
-        <img class="card-img-top" src="{{ blog_post.image.url }}" alt="Blog image Unavailable">
+        <img class="card-img-top" src="{{ blog_post.image.url }}" alt="Blog Image Unavailable">
         <div class="card-body my-2">
             <h2 class="card-title">{{ blog_post.title }}</h2>
                 <p class="card-text">{{ blog_post.body|safe}}</p>
@@ -27,20 +40,26 @@
                             <a href="{% url 'blog:edit' blog_post.slug %}" class="btn btn-primary">Update</a>
                         {% endif %}
                         {% if request.user.is_authenticated %}
-                        <div>
+                        <div class="like">
                            {% include 'blog/snippets/blog_like.html' %}
                         </div>
                         {% else %}
-                        <p><a href="{% url 'users:registration_view' %}">Log in to</a> like or comment</p>
+                        <p><a href="{% url 'users:registration_view' %}">Log in</a> to like or comment</p>
                     {% endif %}
-            <p class="strong">Comments: </p>
                 {% if not blog_comments %}
                     {% include 'blog/snippets/crt_comment.html' %}
                 {% else %}
                     {% for coms in blog_comments%}
-                        <p>{{ coms.body }}</p>
-                        <p><strong>By {{ coms.author.username }} {{ coms.whenpublished}}</strong></p>
-                    {% if coms.author == request.user %} <p><a href="{% url 'blog:delete_comment' blog_id %}">Delete</a></p> {% endif %}
+                    <div class="commented-section mt-2">
+                        <div class="d-flex flex-row align-items-center commented-user">
+                            <h5 class="mr-2"><strong>{{ coms.author.username }}</strong> {{coms.whenpublished}} </h5></div>
+                        <div class="comment-text-sm"><span>{{ coms.body }}</span></div>
+                        <div class="reply-section">
+                            <div class="d-flex flex-row align-items-center voting-icons"><span class="dot ml-2"></span>
+                                <h6 class="ml-2 mt-1">{% if coms.author == request.user %}<a href="{% url 'blog:delete_comment' blog_id %}">Delete</a> {% endif %}</h6>
+                            </div>
+                        </div>
+                    </div>
                 {% endfor %}
                 {% include 'blog/snippets/crt_comment.html'%}
             {%endif%}
@@ -52,6 +71,7 @@
         </div>
     </div>
 </div>
+
 <script src="https://unpkg.com/htmx.org@1.8.5"></script>
 <script>
     document.body.addEventListener('htmx:configRequest', (e) => {
