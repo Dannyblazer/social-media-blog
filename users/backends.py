@@ -1,6 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.contrib.auth.backends import ModelBackend
 
+# Backend class utility for implementing case-insensitive logins with the username and email field
 class CaseInsensitiveModelBackend(ModelBackend):
 
     def authenticate(self, request, username=None, password=None, **kwargs):

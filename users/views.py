@@ -23,6 +23,7 @@ def index(request):
     template = loader.get_template('users/home.html')
     return HttpResponse(template.render(context, request))
 
+# Handle account creation/registration requests
 def registration_view(request):
     context = {}
     if not request.user.is_authenticated:
@@ -33,6 +34,7 @@ def registration_view(request):
                 email = form.cleaned_data.get('email')
                 raw_password = form.cleaned_data.get('password1')
                 account = authenticate(email=email, password=raw_password)
+                # Automatic login after registration
                 dj_login(request, account)
                 return HttpResponseRedirect(reverse('home'))
             else:
@@ -69,7 +71,7 @@ def logout_view(request):
     logout(request)
     return redirect('home')
 
-
+# handle profile requests views
 @login_required
 def account_view(request, *args, **kwargs):
     context = {}
