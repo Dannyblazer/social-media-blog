@@ -194,6 +194,7 @@
 	onStart()
 	var chatSocket = null;
 	var roomId = null;
+	setupWebSocket(roomId)
 	function onStart(){
 		{% for x in m_and_f %}
 			preloadImage("{{x.friend.profile_image.url|safe}}", "id_friend_img_{{x.friend.id}}")
@@ -205,9 +206,7 @@ function closeWebSocket(){
 		if(chatSocket != null){
 			chatSocket.close()
 			chatSocket = null
-			clearChatLog()
-			setPageNumber("1")
-			disableChatLogScrollListener()
+			
 		}
 	}
 
@@ -252,8 +251,7 @@ function closeWebSocket(){
 			if (data.join) {
 				console.log("Joining room " + data.join);
 				getUserInfo()
-				getRoomChatMessages()
-				enableChatLogScrollListener()
+				
 			}
 			// Handle leaving (client perspective)
 			if (data.leave) {
@@ -305,6 +303,43 @@ function closeWebSocket(){
 	    } else if (chatSocket.readyState == WebSocket.CONNECTING){
 	        console.log("ChatSocket connecting..")
 	    }
+	}
+
+	function getUserInfo(){
+		chatSocket.send(JSON.stringify({
+			"command": "get_user_info",
+			"room_id": roomId
+		}))
+	}
+
+	function handleUserInfoPayload(user_info){
+		document.getElementById("id_other_username").innerHTML = user_info.username
+		document.getElementById("id_other_profile_image").classList.remove("d-none")
+		document.getElementById("id_user_info_container").href = "{% url 'users:profile_view' 65489498 %}".replace("65489498", user_info,username)
+		preloadImage(user_info.profile_image, "id_other_user_profile_image")
+	}
+
+	function createOrReturnPrivateChat(id){
+		payload = {
+			"csrfmiddlewaretoken": "{{ csrf_token }}",
+			"user2_id": id,
+		}
+		$.ajax{
+			type: "POST",
+			dataType: "json",
+			url: "{% url 'chat:create-or-return-private-chat' %}",
+			data: payload,
+			timeout: 5000,
+			success: function(data){
+				console.log("SUCCESS", data)
+				if(data['response'] == "Successfully got the chat."){
+					setupWebSocket(data['chatroom_id'])
+				}
+				else if(data['response'] != null){
+					alert(data['response'])
+				}
+			}
+		}
 	}
 </script>
 
