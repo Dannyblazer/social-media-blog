@@ -191,16 +191,40 @@
 <!-- Client Error MODAL -->
 
 <script type="text/javascript">
-	onStart()
+
 	var chatSocket = null;
 	var roomId = null;
-	setupWebSocket(roomId)
+	
+	onStart()
+
 	function onStart(){
+		{% if room %}
+			if("{{room.user1}}" == "{{request.user}}"){
+				onSelectFriend("{{room.user2.id}}")
+			}
+			else{
+				onSelectFriend("{{room.user1.id}}")
+			}
+			console.log("Room dey!")
+		{% else %}
+		console.log("Room no dey!")
+			{% if m_and_f %}
+				onSelectFriend("{{m_and_f.0.friend.id}}")
+			{% endif %}
+		{% endif %}
 		{% for x in m_and_f %}
 			preloadImage("{{x.friend.profile_image.url|safe}}", "id_friend_img_{{x.friend.id}}")
-		}	
-			{% endfor %}
+		{% endfor %}
+	}
+
 {% include "public_chat/snippets/preloader.html" %}
+
+function onSelectFriend(userId){
+		console.log("onSelectFriend: " + userId)
+		createOrReturnPrivateChat(userId)
+		clearHighlightedFriend()
+		highlightFriend(userId)
+	}
 
 function closeWebSocket(){
 		if(chatSocket != null){
@@ -209,6 +233,45 @@ function closeWebSocket(){
 			
 		}
 	}
+
+
+	
+	function createOrReturnPrivateChat(id){
+		payload = {
+			"csrfmiddlewaretoken": "{{ csrf_token }}",
+			"user2_id": id,
+		}
+		$.ajax({
+			type: 'POST',
+			dataType: "json",
+			url: "{% url 'chat:create-or-return-private-chat' %}", // production
+			data: payload,
+			timeout: 5000,
+			success: function(data) {
+				console.log("SUCCESS", data)
+				if(data['response'] == "Successfully got the chat."){
+					chatroomId = data['chatroom_id']
+					OnGetOrCreateChatroomSuccess(chatroomId)
+				}
+				else if(data['response'] != null){
+					alert(data['response'])
+				}
+			},
+			error: function(data) {
+				console.error("ERROR...", data)
+				alert("Something went wrong.")
+			},
+		});
+	}
+
+
+	function OnGetOrCreateChatroomSuccess(chatroomId){
+			var url = "{% url 'chat:private-chatroom' %}?room_id=" + chatroomId
+			var win = window.location.replace(url)
+			// window.open(url) // for new tab
+			win.focus()
+		}
+	
 
 	function setupWebSocket(room_id){
 
@@ -319,18 +382,19 @@ function closeWebSocket(){
 		preloadImage(user_info.profile_image, "id_other_user_profile_image")
 	}
 
+	
 	function createOrReturnPrivateChat(id){
 		payload = {
 			"csrfmiddlewaretoken": "{{ csrf_token }}",
 			"user2_id": id,
 		}
-		$.ajax{
-			type: "POST",
+		$.ajax({
+			type: 'POST',
 			dataType: "json",
-			url: "{% url 'chat:create-or-return-private-chat' %}",
+			url: "{% url 'chat:create-or-return-private-chat' %}", // production
 			data: payload,
 			timeout: 5000,
-			success: function(data){
+			success: function(data) {
 				console.log("SUCCESS", data)
 				if(data['response'] == "Successfully got the chat."){
 					setupWebSocket(data['chatroom_id'])
@@ -338,8 +402,12 @@ function closeWebSocket(){
 				else if(data['response'] != null){
 					alert(data['response'])
 				}
-			}
-		}
+			},
+			error: function(data) {
+				console.error("ERROR...", data)
+				alert("Something went wrong.")
+			},
+		});
 	}
 </script>
 
