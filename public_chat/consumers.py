@@ -282,7 +282,12 @@ class LazyRoomChatMessageEncoder(Serializer):
         return dump_object
 
 
+
+
+
+
 # Private Chat Room consumer
+
 
 class ChatConsumer(AsyncJsonWebsocketConsumer):
 
@@ -319,7 +324,7 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
 			elif command == "get_room_chat_messages":
 				pass
 			elif command == "get_user_info":
-				room = await get_room_or_error(content['room_id'], self.scope['user'])
+				room = await get_room_or_error2(content['room_id'], self.scope['user'])
 				payload = get_user_info(room, self.scope['user'])
 				if payload != None:
 					payload != json.loads(payload)
@@ -346,7 +351,7 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
 		# The logged-in user is in our scope thanks to the authentication ASGI middleware (AuthMiddlewareStack)
 		print("ChatConsumer: join_room: " + str(room_id))
 		try:
-			room = await get_room_or_error(room_id, self.scope['user'])
+			room = await get_room_or_error2(room_id, self.scope['user'])
 		except Exception as e:
 			return
 		await self.send_json({
@@ -478,7 +483,7 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
 		return
 
 @database_sync_to_async
-def get_room_or_error(room_id, user):
+def get_room_or_error2(room_id, user):
     """
      Tries to fetch a room for the user, checking permissions along the way
     """
