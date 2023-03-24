@@ -26,3 +26,14 @@ Admin Controls: Admins have the ability to manage users, moderate comments, and 
 In addition to the core features, this advanced social media blog with Django also includes features such as personalized content recommendations, integration with third-party APIs, and advanced analytics and reporting capabilities.
 
 Overall, this advanced social media blog with Django provides a robust platform for bloggers to publish content and engage with their audience, while also providing opportunities for social interaction and user-generated content.
+
+## Technologies Used
+
+- Django
+- PostgreSQL
+- JavaScript
+- Bootstrap
+- Redis
+- Django-channels
+- Rest Api
+- HTML/CSS
