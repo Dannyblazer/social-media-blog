@@ -1,7 +1,7 @@
 # social-media-blog
 An advanced Social Media Blog app with Django
 
-An advanced social media blog with Django with the following features:
+This social media blog app with Django has the following features:
 
 User Authentication: Users can create an account and login to access the blog functionality.
 
