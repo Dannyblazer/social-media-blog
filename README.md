@@ -45,7 +45,7 @@ Overall, this advanced social media blog with Django provides a robust platform 
 
 ![Create Blog Page](site-images/creating.png)
 
-![Profile Page](site-images/profile.png)
+![Profile Page](site-images/Profile.png)
 
 ![Account Edit Page](site-images/Edit_acc.png)
 
