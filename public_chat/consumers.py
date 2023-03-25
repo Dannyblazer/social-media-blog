@@ -296,7 +296,7 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
 		"""
 		Called when the websocket is handshaking as part of initial connection.
 		"""
-		print("ChatConsumer: connect: " + str(self.scope["user"]))
+		print("ChatConsumer: connect: " + str(self.scope["user"].username))
 
 		# let everyone connect. But limit read/write to authenticated users
 		await self.accept()
@@ -315,6 +315,7 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
 		command = content.get("command", None)
 		try:
 			if command == "join":
+				print("Join Command detected!")
 				await self.join_room(content['room'])
 			elif command == "leave":
 				# Leave the room
@@ -330,8 +331,7 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
 					payload != json.loads(payload)
 					await self.send_user_info_payload(payload['user_info'])
 				else:
-				    raise Exception("Something went wrong retrieving the other users account details.")
-                
+					raise Exception("Something went wrong retrieving the other users account details.")
 		except Exception as e:
 			pass
 
