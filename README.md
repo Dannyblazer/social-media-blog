@@ -37,3 +37,18 @@ Overall, this advanced social media blog with Django provides a robust platform 
 - Django-channels
 - Rest Api
 - HTML/CSS
+
+
+![Home Page](../Site-Images/home.png)
+
+![Blog Detail Page](../Site-Images/detail.png)
+
+![Create Blog Page](../Site-Images/creating.png)
+
+![Profile Page](../Site-Images/profile.png)
+
+![Account Edit Page](../Site-Images/Edit_acc.png)
+
+![Public Chat Page](../Site-Images/Public_chat.png)
+
+![alt text]([https://github.com/Dannyblazer/Site-Images/blob/master/Profile.png)?raw=true)
