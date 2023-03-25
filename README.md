@@ -50,3 +50,5 @@ Overall, this advanced social media blog with Django provides a robust platform 
 ![Account Edit Page](../Site-Images/Edit_acc.png)
 
 ![Public Chat Page](../Site-Images/Public_chat.png)
+
+![alt text]([https://github.com/Dannyblazer/Site-Images/blob/master/Profile.png)jpg?raw=true)
