@@ -115,8 +115,7 @@
                                             {%else%}
                                             <a href="{% url 'users:must_authenticate' %}"><i class="fa fa-thumbs-up"></i> Like <span class="w3-badge w3-blue">{{ blog_post.likes.count }}</a>
                                             {%endif%}
-                                            <a href="#"><i class="fa fa-comment"></i> Comment <span class="w3-badge w3-blue">{{ blog_post.comment.count }}</a>
-                                            <a href="#"><i class="fa fa-share"></i> Share (6)</a>
+
                                         </div>
                                     {% if blog_post.comment.all %}
                                         {% for com in blog_post.comment.all %}
