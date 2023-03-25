@@ -37,3 +37,6 @@ Overall, this advanced social media blog with Django provides a robust platform 
 - Django-channels
 - Rest Api
 - HTML/CSS
+
+
+![Home Page](https://drive.google.com/file/d/1x5xfy0h1esFPnKvi8oJ_kbSifRQc3mnb/view?usp=share_link)
