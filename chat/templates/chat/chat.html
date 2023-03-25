@@ -205,9 +205,7 @@
 			else{
 				onSelectFriend("{{room.user1.id}}")
 			}
-			console.log("Room dey!")
 		{% else %}
-		console.log("Room no dey!")
 			{% if m_and_f %}
 				onSelectFriend("{{m_and_f.0.friend.id}}")
 			{% endif %}
@@ -302,7 +300,7 @@ function closeWebSocket(){
 			var data = JSON.parse(message.data);
 
 			// display the progress bar?
-			displayChatroomLoadingSpinner(data.display_progress_bar)
+			// displayChatroomLoadingSpinner(data.display_progress_bar)
 
 			// Handle errors (ClientError)
 			if (data.error) {
@@ -374,11 +372,31 @@ function closeWebSocket(){
 			"room_id": roomId
 		}))
 	}
+	
+	function highlightFriend(userId){
+		// select new friend
+		document.getElementById("id_friend_container_" + userId).style.background = "#f2f2f2"
+	}
+
+	function clearHighlightedFriend(){
+		{% if m_and_f %}
+			{% for x in m_and_f %}
+				document.getElementById("id_friend_container_{{x.friend.id}}").style.background = ""
+			{% endfor %}
+		{% endif %}
+
+		// clear the profile image and username of current chat
+		document.getElementById("id_other_user_profile_image").classList.add("d-none")
+		document.getElementById("id_other_user_profile_image").src = "{% static 'users/20221119_205632_SnvSsK2.jpg' %}"
+		document.getElementById("id_other_username").innerHTML = ""
+	}
+
+
 
 	function handleUserInfoPayload(user_info){
 		document.getElementById("id_other_username").innerHTML = user_info.username
 		document.getElementById("id_other_profile_image").classList.remove("d-none")
-		document.getElementById("id_user_info_container").href = "{% url 'users:profile_view' 65489498 %}".replace("65489498", user_info,username)
+		document.getElementById("id_user_info_container").href = "{% url 'users:profile_view' 65489498 %}".replace("65489498", user_info.username)
 		preloadImage(user_info.profile_image, "id_other_user_profile_image")
 	}
 

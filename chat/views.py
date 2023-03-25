@@ -18,6 +18,7 @@ DEBUG = True
 def private_chat_room(request, *args, **kwargs):
 	context = {}
 	room_id = request.GET.get("room_id")
+	print("GOT THE ROOM ID: "+ str(room_id))
 	user = request.user
 	if not user.is_authenticated:
 		base_url = reverse('login')
@@ -30,6 +31,7 @@ def private_chat_room(request, *args, **kwargs):
 	context["BASE_URL"] = settings.BASE_URL
 	if room_id:
 		context["room_id"] = room_id
+		print("Chat room id: " + str(room_id))
 	context['debug'] = DEBUG
 	context['debug_mode'] = settings.DEBUG
 	return render(request, "chat/chat.html", context)
@@ -100,7 +102,6 @@ def create_or_return_private_chat(request, *args, **kwargs):
 			try:
 				user2 = Account.objects.get(pk=user2_id)
 				chat = find_or_create_private_chat(user1, user2)
-				print("Successfully got the chat")
 				payload['response'] = "Successfully got the chat."
 				payload['chatroom_id'] = chat.id
 			except Account.DoesNotExist:
