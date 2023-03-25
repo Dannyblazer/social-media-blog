@@ -4,7 +4,7 @@ from channels.auth import AuthMiddlewareStack
 from channels.routing import ProtocolTypeRouter, URLRouter
 from channels.security.websocket import AllowedHostsOriginValidator
 from django.core.asgi import get_asgi_application
-from django.urls import path
+from django.urls import re_path
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "Blogz.settings")
 # Initialize Django ASGI application early to ensure the AppRegistry
@@ -21,8 +21,8 @@ application = ProtocolTypeRouter({
     "websocket": AllowedHostsOriginValidator(
         AuthMiddlewareStack(
             URLRouter([
-                path("chat/<roomId>", ChatConsumer.as_asgi()),
-                path("public_chat/", PublicChatConsumer.as_asgi()),
+                re_path(r"chat/(?P<room_name>\w+)/$", ChatConsumer.as_asgi()),
+                re_path(r"public_chat/$", PublicChatConsumer.as_asgi()),
             ])
         )
     ),
