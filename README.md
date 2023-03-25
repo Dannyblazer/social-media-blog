@@ -39,4 +39,14 @@ Overall, this advanced social media blog with Django provides a robust platform 
 - HTML/CSS
 
 
-![Home Page](https://drive.google.com/file/d/1x5xfy0h1esFPnKvi8oJ_kbSifRQc3mnb/view?usp=share_link)
+![Home Page](/Site-images/home.png)
+
+![Blog Detail Page](/Site-images/detail.png)
+
+![Create Blog Page](/Site-images/creating.png)
+
+![Profile Page](/Site-images/profile.png)
+
+![Account Edit Page](/Site-images/Edit_acc.png)
+
+![Public Chat Page](/Site-images/Public_chat.png)
