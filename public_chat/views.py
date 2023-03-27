@@ -8,4 +8,5 @@ def room(request):
     context['debug_mode'] = settings.DEBUG
     context['debug'] = DEBUG
     context['room_id'] = 1
+    context['public_chat'] = True
     return render(request, "public_chat/room.html", context)
