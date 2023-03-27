@@ -6,7 +6,7 @@
 	<!-- MEDIUM+ SCREENS -->
 	<div class="d-none d-md-flex flex-row my-auto flex-grow-1 align-items-center">
 		<h5 class="mr-3 font-weight-normal justify-content-start" id="homee">
-			<a id="head" class="p-2 text-dark" href="{% url 'public_chat:room' %}">Home</a>
+			<a id="head" class="p-2 text-dark" href="/">Home</a>
 		</h5>
 		{% if is_home %}
 		<form method="GET" class="search-bar justify-content-start">
@@ -21,11 +21,11 @@
 		<div class="d-flex flex-row-reverse flex-grow-1">
 			<nav class="">
 				{% if request.user.is_authenticated %}
-					<div class="dropdown dropleft show p-2">
+					<div class="dropdown dropleft">
 						<div class="d-flex flex-row">
 
 							<div class="btn-group dropleft">
-								<div class="d-flex notifications-icon-container rounded-circle align-items-center mr-3" id="id_chat_notification_dropdown_toggle" data-bs-toggle="dropdown">
+								<div class="d-flex notifications-icon-container rounded-circle align-items-center mr-3" id="id_chat_notification_dropdown_toggle" data-toggle="dropdown">
 									<span id="id_chat_notifications_count" class="notify-badge"></span>
 									<span class="d-flex material-icons notifications-material-icon m-auto align-items-center">chat</span>
 									<div class="dropdown-menu scrollable-menu" aria-labelledby="id_chat_notification_dropdown_toggle" id="id_chat_notifications_container">
@@ -34,7 +34,7 @@
 							</div>
 
 							<div class="btn-group dropleft">
-								<div class="d-flex notifications-icon-container rounded-circle align-items-center mr-3" id="id_notification_dropdown_toggle" data-bs-toggle="dropdown" onclick="setGeneralNotificationsAsRead()">
+								<div class="d-flex notifications-icon-container rounded-circle align-items-center mr-3" id="id_notification_dropdown_toggle" data-toggle="dropdown" onclick="setGeneralNotificationsAsRead()">
 									<span id="id_general_notifications_count" class="notify-badge"></span>
 									<span class="d-flex material-icons notifications-material-icon m-auto align-items-center">notifications</span>
 									<div class="dropdown-menu scrollable-menu" aria-labelledby="id_notification_dropdown_toggle" id="id_general_notifications_container">					
@@ -43,7 +43,7 @@
 							</div>
 
 							<div class="btn-group dropleft">
-								<img class="account-image rounded-circle m-auto d-block dropdown-toggle" id="id_profile_links" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" src="{{request.user.profile_image.url}}" alt="codingwithmitch logo" width="40" height="40">
+								<img class="account-image rounded-circle m-auto d-block dropdown-toggle" id="id_profile_links" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" src="{{request.user.profile_image.url}}" alt="codingwithmitch logo" width="40" height="40">
 								<div class="dropdown-menu" aria-labelledby="id_profile_links">
 									<a class="dropdown-item" href="{% url 'users:profile_view' request.user.username %}">Account</a>
 									<a class="dropdown-item" href="{% url 'users:logout' %}">Logout</a>
@@ -108,13 +108,19 @@
 	}
 
 	function setupChatDropdownHeader(){
-		var notificationContainer = document.querySelector("id_chat_notifications_container")
+		var notificationContainer = document.getElementById("id_chat_notifications_container")
 
 		if(notificationContainer != null){
 			var div = document.createElement("div")
 			div.classList.add("chat-dropdown-header", "d-flex", "flex-row", "justify-content-end", "m-auto", "align-items-end")
 			div.addEventListener("click", function(e){
-				var url = "{% url 'chat:private-chatroom' %}"
+				if("{{public_chat}}"){
+					var url = "{% url 'chat:private-chatroom' %}"
+				}
+				else{
+					var url = "{% url 'public_chat:room' %}"
+				}
+				
 				chatRedirect(url)
 			})
 
