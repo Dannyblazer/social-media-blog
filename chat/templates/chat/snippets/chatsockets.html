@@ -1,0 +1,332 @@
+{% load static %}
+<script type="text/javascript">
+
+	var chatSocket = null;
+	var roomId = null;
+	
+	onStart()
+
+	function onStart(){
+		{% if room %}
+			if("{{room.user1}}" == "{{request.user}}"){
+				onSelectFriend("{{room.user2.id}}")
+			}
+			else{
+				onSelectFriend("{{room.user1.id}}")
+			}
+		{% else %}
+			{% if m_and_f %}
+				onSelectFriend("{{m_and_f.0.friend.id}}")
+			{% endif %}
+		{% endif %}
+		{% for x in m_and_f %}
+			preloadImage("{{x.friend.profile_image.url|safe}}", "id_friend_img_{{x.friend.id}}")
+		{% endfor %}
+	}
+
+{% include "public_chat/snippets/preloader.html" %}
+
+function onSelectFriend(userId){
+		console.log("onSelectFriend: " + userId)
+		createOrReturnPrivateChat(userId)
+		clearHighlightedFriend()
+		highlightFriend(userId)
+	}
+
+function closeWebSocket(){
+		if(chatSocket != null){
+			chatSocket.close()
+			chatSocket = null
+			
+		}
+	}
+
+
+	
+	function createOrReturnPrivateChat(id){
+		payload = {
+			"csrfmiddlewaretoken": "{{ csrf_token }}",
+			"user2_id": id,
+		}
+		$.ajax({
+			type: 'POST',
+			dataType: "json",
+			url: "{% url 'chat:create-or-return-private-chat' %}", // production
+			data: payload,
+			timeout: 5000,
+			success: function(data) {
+				console.log("SUCCESS", data)
+				if(data['response'] == "Successfully got the chat."){
+					chatroomId = data['chatroom_id']
+					OnGetOrCreateChatroomSuccess(chatroomId)
+				}
+				else if(data['response'] != null){
+					alert(data['response'])
+				}
+			},
+			error: function(data) {
+				console.error("ERROR...", data)
+				alert("Something went wrong.")
+			},
+		});
+	}
+
+
+	function OnGetOrCreateChatroomSuccess(chatroomId){
+			var url = "{% url 'chat:private-chatroom' %}?room_id=" + chatroomId
+			var win = window.location.replace(url)
+			// window.open(url) // for new tab
+			win.focus()
+		}
+	
+
+	function setupWebSocket(room_id){
+
+		console.log("setupWebSocket: " + room_id)
+
+		roomId = room_id
+
+		// close previous socket if one is open
+		closeWebSocket()
+
+		// Correctly decide between ws:// and wss://
+		var ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
+		{% if debug_mode %}
+			var ws_path = ws_scheme + '://' + window.location.host + "/chat/" + roomId + "/"; // development
+		{% else %}
+			var ws_path = ws_scheme + '://' + window.location.host + ":8001/chat/" + roomId + "/"; // production
+		{% endif %}
+		
+		
+		// console.log("Connecting to " + ws_path);
+		chatSocket = new WebSocket(ws_path);
+
+		// Handle incoming messages
+		chatSocket.onmessage = function(message) {
+			// Decode the JSON
+			// console.log("Got chat websocket message " + message.data);
+			console.log("Got websocket message.");
+			var data = JSON.parse(message.data);
+
+			// display the progress bar?
+			// displayChatroomLoadingSpinner(data.display_progress_bar)
+
+			// Handle errors (ClientError)
+			if (data.error) {
+				console.error(data.error + ": " + data.message)
+				showClientErrorModal(data.message)
+				return;
+			}
+			// Handle joining (Client perspective)
+			if (data.join) {
+				console.log("Joining room " + data.join);
+				getUserInfo()
+				
+			}
+			// Handle leaving (client perspective)
+			if (data.leave) {
+				// do nothing
+				console.log("Leaving room " + data.leave);
+			}
+
+			// user info coming in from backend
+			if(data.user_info){
+				handleUserInfoPayload(data.user_info)
+			}
+
+			// Handle getting a message
+			if (data.msg_type == 0 || data.msg_type == 1 || data.msg_type == 2) {
+				appendChatMessage(data, false, true)
+			}
+
+			// new payload of messages coming in from backend
+			if(data.messages_payload){
+				handleMessagesPayload(data.messages, data.new_page_number)
+			}
+		};
+
+		chatSocket.addEventListener("open", function(e){
+			console.log("ChatSocket OPEN")
+			// join chat room
+			if("{{request.user.is_authenticated}}"){
+				chatSocket.send(JSON.stringify({
+					"command": "join",
+					"room": roomId
+				}));
+			}
+		})
+
+		chatSocket.onclose = function(e) {
+			console.log('Chat socket closed.');
+		};
+
+		chatSocket.onOpen = function(e){
+			console.log("ChatSocket onOpen", e)
+		}
+
+		chatSocket.onerror = function(e){
+	        console.log('ChatSocket error', e)
+	    }
+
+	    if (chatSocket.readyState == WebSocket.OPEN) {
+	    	console.log("ChatSocket OPEN")
+	    } else if (chatSocket.readyState == WebSocket.CONNECTING){
+	        console.log("ChatSocket connecting..")
+	    }
+	}
+
+	function getUserInfo(){
+		chatSocket.send(JSON.stringify({
+			"command": "get_user_info",
+			"room_id": roomId
+		}))
+	}
+	
+	function highlightFriend(userId){
+		// select new friend
+		document.getElementById("id_friend_container_" + userId).style.background = "#f2f2f2"
+	}
+
+	function clearHighlightedFriend(){
+		{% if m_and_f %}
+			{% for x in m_and_f %}
+				document.getElementById("id_friend_container_{{x.friend.id}}").style.background = ""
+			{% endfor %}
+		{% endif %}
+
+		// clear the profile image and username of current chat
+		document.getElementById("id_other_user_profile_image").classList.add("d-none")
+		document.getElementById("id_other_user_profile_image").src = "{% static 'users/20221119_205632_SnvSsK2.jpg' %}"
+		document.getElementById("id_other_username").innerHTML = ""
+	}
+
+
+
+	function handleUserInfoPayload(user_info){
+		document.getElementById("id_other_username").innerHTML = user_info.username
+		document.getElementById("id_other_profile_image").classList.remove("d-none")
+		document.getElementById("id_user_info_container").href = "{% url 'users:profile_view' 65489498 %}".replace("65489498", user_info.username)
+		preloadImage(user_info.profile_image, "id_other_user_profile_image")
+	}
+
+	function appendChatMessage(data, maintainPosition, isNewMessage){
+		messageType = data.msg_type
+		msg_id = data.msg_id
+		message = data.message
+		uName = data.username
+		user_id = data.user_id
+		profile_image = data.profile_image
+		timestamp = data.natural_timestamp
+		console.log("append new chat message: " + messageType)
+
+		username = uName + ": "
+		msg = message + "\n"
+		createChatMessageElement(msg, msg_id, username, profile_image, user_id, timestamp, maintainPosition, isNewMessage)
+	}
+
+	function createChatMessageElement(msg, msg_id, username, profile_image, user_id, timestamp, maintainPosition, isNewMessage){
+		var chatlog = document.getElementById("id_chat_log")
+		var newMessageDiv = document.createElement("div")
+		newMessageDiv.classList.add("d-flex", "flex-row", "message-container")
+
+		var profileImage = document.createElement("img")
+		profileImage.addEventListener("click", function(e){
+			selectUser(user_id)
+		})
+		profileImage.classList.add("profile-image", "rounded-circle", "img-fluid")
+		profileImage.src = "{% static 'users/20221119_205632_SnvSsK2.jpg' %}"
+		var profile_image_id = "id_profile_image_" + msg_id
+		profileImage.id = profile_image_id
+
+		newMessageDiv.appendChild(profileImage)
+
+		var div1 = document.createElement("div")
+		div1.classList.add("d-flex", "flex-column")
+
+		var div2 = document.createElement("div")
+		div2.classList.add("d-flex", "flex-row")
+
+		var usernameSpan = document.createElement("span")
+		usernameSpan.innerHTML = username
+		usernameSpan.classList.add("username-span")
+		usernameSpan.addEventListener("click", function(e){
+			selectUser(user_id)
+		})
+		div2.appendChild(usernameSpan)
+
+		var timestampSpan = document.createElement("span")
+		timestampSpan.innerHTML = timestamp
+		timestampSpan.classList.add("d-flex", "align-items-center", "timestamp-span")
+		timestampSpan.addEventListener("click", function(e){
+			selectUser(user_id)
+		})
+
+		div2.appendChild(timestampSpan)
+		div1.appendChild(div2)
+
+		var msgP = document.createElement("p")
+		msgP.innerHTML = validateText(msg)
+		msgP.classList.add("msg-p")
+		div1.appendChild(msgP)
+
+		newMessageDiv.appendChild(div1)
+
+		if(isNewMessage){
+			chatlog.insertBefore(newMessageDiv, chatlog.firstChild)
+		}
+		else{
+			chatlog.appendChild(newMessageDiv)
+		}
+		if(!maintainPosition){
+			chatlog.scrollTop = chatlog.scrollHeight
+		}
+		preloadImage(profile_image, profile_image_id)
+	}
+		// message submit key handler
+	document.getElementById("id_chat_message_input").focus()
+	document.getElementById("id_chat_message_input").onkeyup = function(e){
+		if(e.keyCode == 13 && e.shiftKey){
+			// Handled automatically by the textarea
+		}
+		else if(e.keyCode == 13 && !e.shiftKey){
+			document.getElementById("id_chat_message_submit").click()
+		}
+	}
+	document.getElementById("id_chat_message_submit").onclick = function(e){
+		const messageInputDom = document.getElementById("id_chat_message_input")
+		const message = messageInputDom.value
+		chatSocket.send(JSON.stringify({
+			"command": "send",
+			"message": message,
+			"room": roomId,
+		}))
+		messageInputDom.value = ""
+	}
+	
+	function createOrReturnPrivateChat(id){
+		payload = {
+			"csrfmiddlewaretoken": "{{ csrf_token }}",
+			"user2_id": id,
+		}
+		$.ajax({
+			type: 'POST',
+			dataType: "json",
+			url: "{% url 'chat:create-or-return-private-chat' %}", // production
+			data: payload,
+			timeout: 5000,
+			success: function(data) {
+				console.log("SUCCESS", data)
+				if(data['response'] == "Successfully got the chat."){
+					setupWebSocket(data['chatroom_id'])
+				}
+				else if(data['response'] != null){
+					alert(data['response'])
+				}
+			},
+			error: function(data) {
+				console.error("ERROR...", data)
+				alert("Something went wrong.")
+			},
+		});
+	}
+</script>
