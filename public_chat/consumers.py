@@ -544,7 +544,9 @@ def get_user_info(room, user):
         payload = {}
         s = LazyAccountEncoder()
         payload['user_info'] = s.serialize([other_user])[0]
-        return json.dumps(payload)
+
+        # Added indent, sort_keys and default to fix the serializable object type
+        return json.dumps(payload, indent=4, sort_keys=True, default=str)
 
     except Exception as e:
          print("EXCEPTION: " + str(e))
