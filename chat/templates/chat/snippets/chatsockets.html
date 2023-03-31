@@ -37,12 +37,42 @@ function closeWebSocket(){
 		if(chatSocket != null){
 			chatSocket.close()
 			chatSocket = null
+			clearChatLog()
+			setPageNumber("1")
 			
 		}
 	}
 
+	function clearChatLog(){
+		document.getElementById("id_chat_log").innerHTML = ""
+	}
 
+	function setPageNumber(pageNumber){
+		document.getElementById("id_page_number").innerHTML  = pageNumber
+	}
 	
+	function setPaginationExhausted(){
+		setPageNumber("-1")
+	}
+
+	function getRoomChatMessages(){
+		var pageNumber = document.getElementById("id_page_number").innerHTML
+		if(pageNumber != "-1"){
+			setPageNumber("-1")
+			chatSocket.send(JSON.stringify({
+				"command": "get_room_messages",
+				"room_id": roomId,
+				"page_number": pageNumber
+			}))
+		}
+	}
+
+	function handleMessagesPayload(messages, new_page_number){
+		if(messages != null && messages != "undefined" && messages != "None"){
+			appendChatMessage(message, true, false)
+		}
+	}
+
 	function createOrReturnPrivateChat(id){
 		payload = {
 			"csrfmiddlewaretoken": "{{ csrf_token }}",
@@ -121,6 +151,7 @@ function closeWebSocket(){
 			if (data.join) {
 				console.log("Joining room " + data.join);
 				getUserInfo()
+				getRoomChatMessages()
 				
 			}
 			// Handle leaving (client perspective)
@@ -207,6 +238,10 @@ function closeWebSocket(){
 		document.getElementById("id_other_profile_image").classList.remove("d-none")
 		document.getElementById("id_user_info_container").href = "{% url 'users:profile_view' 65489498 %}".replace("65489498", user_info.username)
 		preloadImage(user_info.profile_image, "id_other_user_profile_image")
+	}
+
+	function selectUser(user_id){
+		var url = "{% url 'users:profile_view' 654546565 %}".replace("654546565", user_id)
 	}
 
 	function appendChatMessage(data, maintainPosition, isNewMessage){
