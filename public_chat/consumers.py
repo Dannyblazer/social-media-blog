@@ -182,7 +182,6 @@ class PublicChatConsumer(AsyncJsonWebsocketConsumer):
         })
 
     async def connected_user_count(self, event):
-        print("function Called!")
         """Called to send the number of connected users to the group chat"""
         await self.send_json({
             "msg_type": MSG_TYPE_CONNECTED_USER_COUNT,
@@ -251,7 +250,7 @@ def get_room_chat_messages(room, page_number):
         payload['new_page_number'] = new_page_number
         return json.dumps(payload)    
     except Exception as e:
-        print("EXCEPTION: " + str(e))
+        print("EXCEPTION bottom: " + str(e))
         return None
 
 class LazyRoomChatMessageEncoder(Serializer):
@@ -309,7 +308,15 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
 				if len(content['message'].lstrip()) != 0:
 					await self.send_room(content['room'], content['message'])
 			elif command == "get_room_chat_messages":
-				pass
+				await self.display_progress_bar(True)
+				room = await get_room_or_error2(content['room_id'], self.scope['user'])
+				payload = await get_room_chat_messages2(room, content['page_number'])
+				if payload != None:
+					payload = json.loads(payload)
+					await self.send_messages_payload(payload['messages'], payload['new_page_number'])
+				else:
+					raise ClientError(204, "SOmething went wrong retrieving the chatroom messages.")
+				await self.display_progress_bar(False)
 			elif command == "get_user_info":
 				room = await get_room_or_error2(content['room_id'], self.scope['user'])
 				payload = get_user_info(room, self.scope['user'])
@@ -471,6 +478,16 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
             "natural_timestamp": timestamp,
 
         })
+    
+	async def send_messages_payload(self, messages, new_page_number):
+		"""
+ 		Send a payload of messages to the client sockets"""        
+		print("ChatConsumer: send_messages_payload. ")
+		await self.send_json({
+			"messages_payload": "messages_payload",
+			"messages": messages,
+            "new_page_number": new_page_number,
+		})
 		
 
 	async def send_user_info_payload(self, user_info):
@@ -549,10 +566,30 @@ def get_user_info(room, user):
         return json.dumps(payload, indent=4, sort_keys=True, default=str)
 
     except Exception as e:
-         print("EXCEPTION: " + str(e))
+         print("EXCEPTION second: " + str(e))
     return None
     
 @database_sync_to_async
 def create_room_chat_message(room, user, message):
      return RoomChatMessage.objects.create(user=user, room=room, content=message)
+
+@database_sync_to_async
+def get_room_chat_messages2(room, page_number):
+    try:
+        qs = RoomChatMessage.objects.by_room(room)
+        p = Paginator(qs, DEFAULT_ROOM_CHAT_MESSAGE_PAGE_SIZE1)
+
+        payload = {}
+        new_page_number = int(page_number)
+        if new_page_number <= p.num_pages:
+            new_page_number = new_page_number + 1
+            s = LaxyRoomChatMessageEncoder()
+            payload['messages'] = s.serialize(p.page(page_number).objects_list)
+        else:
+            payload['messages'] = None
+        payload['new_page_number'] = new_page_number
+        return json.dumps(payload)
+    except Exception as e:
+        print("EXCEPTION last: " + str(e))
+    return None
 
