@@ -3,8 +3,7 @@ from django.contrib.auth.decorators import login_required
 from users.models import Account
 from blog.forms import CreateBlogPostForm, UpdateBlogPostForm, CommentForm
 from blog.models import BlogPost, Comment
-from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
-from django.urls import reverse
+from django.http import HttpResponse
 from django.db.models import Q
 import requests
 # Create your views here.
@@ -94,7 +93,6 @@ def blog_like(request, pk):
 
 def create_comment(request, blog_id):
 	context = {}
-
 	if not request.user.is_authenticated:
 		return redirect('users:must_authenticate')
 	blog_post = get_object_or_404(BlogPost, pk=blog_id)
@@ -113,8 +111,8 @@ def create_comment(request, blog_id):
 	return render(request, 'blog/detail_blog.html', context)
 
 @login_required
-def delete_comment(request, blog_id):
-    blog_post = get_object_or_404(BlogPost, pk=blog_id)
-    comment = get_object_or_404(Comment, author=request.user, blogpost=blog_post)
-    comment.delete()
+def delete_comment(request, com_id):
+    commentz = Comment.objects.get(id=com_id)
+    blog_post = get_object_or_404(BlogPost, pk=commentz.blogpost.id)
+    commentz.delete()
     return redirect('blog:detail', slug=blog_post.slug)

@@ -56,7 +56,7 @@
                         <div class="comment-text-sm"><span>{{ coms.body }}</span></div>
                         <div class="reply-section">
                             <div class="d-flex flex-row align-items-center voting-icons"><span class="dot ml-2"></span>
-                                <h6 class="ml-2 mt-1">{% if coms.author == request.user %}<a href="{% url 'blog:delete_comment' blog_id %}">Delete</a> {% endif %}</h6>
+                                <h6 class="ml-2 mt-1">{% if coms.author == request.user %}<a href="{% url 'blog:delete_comment' coms.pk %}">Delete</a> {% endif %}</h6>
                             </div>
                         </div>
                     </div>
