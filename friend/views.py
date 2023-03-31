@@ -78,7 +78,7 @@ def remove_friend(request, *args, **kwargs):
     user = request.user
     payload = {}
     if request.method == "POST" and user.is_authenticated:
-        user_id = request.POST.get["receiver_user_id"]
+        user_id = request.POST["receiver_user_id"]
         if user_id:
             try:
                 removee = Account.objects.get(id=user_id)
