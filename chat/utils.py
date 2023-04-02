@@ -32,7 +32,7 @@ def calculate_timestamp(timestamp):
         ts = f"{str_time}"
     return str(ts)
 
-class LaxyRoomChatMessageEncoder(Serializer):
+class LaxyRoomChatMessageEncoder2(Serializer):
     def get_dump_object(self, obj):
         dump_object = {}
         dump_object.update({"msg_type": MSG_TYPE_MESSAGE})

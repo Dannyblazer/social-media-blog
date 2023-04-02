@@ -10,66 +10,67 @@
 
 
 <div class="container">
-<div class="row">
-	<div class="col-sm-9 m-0 p-2">
-		<div class="card" id="id_chatroom_card">
-			<div class="d-flex flex-row align-items-center card-header" id="id_room_title">
-			<a class="d-flex flex-row" target="_blank" id="id_user_info_container">
-				<img class="profile-image rounded-circle img-fluid" id="id_other_user_profile_image" src="{% static 'users/20221119_205632_SnvSsK2.jpg' %}">
-				<h3 class="ml-2" id="id_other_username"></h3>
-			</a>
-			
-			</div>
-			<div class="card-body p-1">
-				<div class="d-flex flex-column" id="id_chat_log_container">
+	<div class="row">
+		<div class="col-sm-9 m-0 p-2">
+			<div class="card" id="id_chatroom_card">
+				<div class="d-flex flex-row align-items-center card-header" id="id_room_title">
+				<a class="d-flex flex-row" target="_blank" id="id_user_info_container">
+					<img class="profile-image rounded-circle img-fluid" id="id_other_user_profile_image" src="{% static 'users/20221119_205632_SnvSsK2.jpg' %}">
+					<h3 id="id_other_username"></h3>
+				</a>
 				
-					<div class="d-flex flex-row justify-content-center" id="id_chatroom_loading_spinner_container">
-						<div class="spinner-border text-primary"  id="id_chatroom_loading_spinner" role="status"  style="display: none; ">
-							<span class="sr-only">Loading...</span>
-						</div>
-					</div>
-					<div class="d-flex chat-log" id="id_chat_log">
-						
-					</div>
+				</div>
+				<div class="card-body p-1">
+					<div class="d-flex flex-column" id="id_chat_log_container">
 					
-					<div class="d-flex flex-row chat-message-input-container">
-						<textarea class="flex-grow-1 chat-message-input" id="id_chat_message_input"></textarea>
-						<button class="btn btn-primary chat-message-submit-button">
-							<span id="id_chat_message_submit" class="material-icons">send
-							</span>
-						</button>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-
-	<div class="col-sm-3 m-0 p-2">
-		<div class="card">
-			<div class="d-flex flex-row align-items-center card-header">
-				<h3 >Friends</h3>
-			</div>
-			<div class="card-body p-1">	
-				<div class="d-flex flex-column friends-list-container ">
-					{% for x in m_and_f %}
-					<div class="d-flex flex-row p-2 friend-container flex-grow-1" onclick="onSelectFriend('{{x.friend.id}}')" id="id_friend_container_{{x.friend.id}}">
-						<img class="profile-image rounded-circle img-fluid" id="id_friend_img_{{x.friend.id}}" src="{% static 'users/20221119_205632_SnvSsK2.jpg' %}" >
-						<div class="d-flex flex-column">
-							<span class="username-span">{{x.friend.username}}</span>
-							<span class="friend-message-span">{{x.message|truncatechars:20}}</span>
+						<div class="d-flex flex-row justify-content-center" id="id_chatroom_loading_spinner_container">
+							<div class="spinner-border text-primary"  id="id_chatroom_loading_spinner" role="status"  style="display: none; ">
+								<span class="sr-only">Loading...</span>
+							</div>
+						</div>
+						<div class="d-flex chat-log" id="id_chat_log">
+							
+						</div>
+						<span class="{% if debug %} d-none {% endif %} page-number" id="id_page_number">1</span>
+						
+						<div class="d-flex flex-row chat-message-input-container">
+							<textarea class="flex-grow-1 chat-message-input" id="id_chat_message_input"></textarea>
+							<button class="btn btn-primary chat-message-submit-button">
+								<span id="id_chat_message_submit" class="material-icons">send
+								</span>
+							</button>
 						</div>
 					</div>
-					{% endfor %}
+				</div>
+			</div>
+		</div>
+
+		<div class="col-sm-3 m-0 p-2">
+			<div class="card">
+				<div class="d-flex flex-row align-items-center card-header">
+					<h3 >Friends</h3>
+				</div>
+				<div class="card-body p-1">	
+					<div class="d-flex flex-column friends-list-container ">
+						{% for x in m_and_f %}
+						<div class="d-flex flex-row p-2 friend-container flex-grow-1" onclick="onSelectFriend('{{x.friend.id}}')" id="id_friend_container_{{x.friend.id}}">
+							<img class="profile-image rounded-circle img-fluid" id="id_friend_img_{{x.friend.id}}" src="{% static 'users/20221119_205632_SnvSsK2.jpg' %}" >
+							<div class="d-flex flex-column">
+								<span class="username-span">{{x.friend.username}}</span>
+								<span class="friend-message-span">{{x.message|truncatechars:20}}</span>
+							</div>
+						</div>
+						{% endfor %}
+					</div>
 				</div>
 			</div>
 		</div>
 	</div>
-</div>
 </div>
 
 
 <!-- Client Error MODAL -->
-<button type="button" id="id_trigger_client_error_modal" class="d-none btn btn-primary" data-bs-toggle="modal" data-target="#id_client_error_modal">
+<button type="button" id="id_trigger_client_error_modal" class="d-none btn btn-primary" data-toggle="modal" data-target="#id_client_error_modal">
 </button>
 <div class="modal fade" id="id_client_error_modal" tabindex="-1" role="dialog">
 <div class="modal-dialog" role="document">

@@ -31,7 +31,17 @@ function onSelectFriend(userId){
 		createOrReturnPrivateChat(userId)
 		clearHighlightedFriend()
 		highlightFriend(userId)
+		changer(userId)
 	}
+
+function changer(userId){
+	{% for x in m_and_f %}
+		var friend = "{{x.friend.id}}"
+		if(userId == friend){
+			preloadImage("{{x.friend.profile_image.url|safe}}", "id_other_user_profile_image")
+		}
+	{% endfor %}
+}
 
 function closeWebSocket(){
 		if(chatSocket != null){
@@ -232,12 +242,11 @@ function closeWebSocket(){
 	}
 
 
-
 	function handleUserInfoPayload(user_info){
-		document.getElementById("id_other_username").innerHTML = user_info.username
-		document.getElementById("id_other_profile_image").classList.remove("d-none")
-		document.getElementById("id_user_info_container").href = "{% url 'users:profile_view' 65489498 %}".replace("65489498", user_info.username)
-		preloadImage(user_info.profile_image, "id_other_user_profile_image")
+		document.getElementById("id_other_username").innerHTML = user_info.fields.username
+		document.getElementById("id_other_user_profile_image").classList.remove("d-none")
+		document.getElementById("id_user_info_container").href = "{% url 'users:profile_view' 65489498 %}".replace("65489498", user_info.fields.username)
+		
 	}
 
 	function selectUser(user_id){

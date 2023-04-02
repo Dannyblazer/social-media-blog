@@ -2,17 +2,15 @@ from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.http import HttpResponse
 from urllib.parse import urlencode
-from django.contrib.auth.decorators import login_required
 from django.conf import settings
 from itertools import chain
 import pytz, json
-from datetime import datetime
+from django.utils import timezone
 from users.models import Account
 from friend.models import FriendList
 from chat.utils import find_or_create_private_chat
 from chat.models import PrivateChatRoom, RoomChatMessage
 # Create your views here.
-
 DEBUG = True
 
 def private_chat_room(request, *args, **kwargs):
@@ -68,19 +66,10 @@ def get_recent_chatroom_messages(user):
 				message = RoomChatMessage.objects.filter(room=room, user=friend).latest("timestamp")
 			except RoomChatMessage.DoesNotExist:
 				# create a dummy message with dummy timestamp
-				today = datetime(
-					year=1950, 
-					month=1, 
-					day=1, 
-					hour=1,
-					minute=1,
-					second=1,
-					tzinfo=pytz.UTC
-				)
 				message = RoomChatMessage(
 					user=friend,
 					room=room,
-					timestamp=today,
+					timestamp=timezone.now(),
 					content="",
 				)
 			m_and_f.append({
