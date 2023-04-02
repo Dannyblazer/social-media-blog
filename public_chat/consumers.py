@@ -275,7 +275,6 @@ class LazyRoomChatMessageEncoder(Serializer):
 
 class ChatConsumer(AsyncJsonWebsocketConsumer):
 
-
 	async def connect(self):
 		"""
 		Called when the websocket is handshaking as part of initial connection.
@@ -308,6 +307,7 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
 				if len(content['message'].lstrip()) != 0:
 					await self.send_room(content['room'], content['message'])
 			elif command == "get_room_chat_messages":
+				print("ASking for messages!")
 				await self.display_progress_bar(True)
 				room = await get_room_or_error2(content['room_id'], self.scope['user'])
 				payload = await get_room_chat_messages2(room, content['page_number'])
@@ -315,13 +315,14 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
 					payload = json.loads(payload)
 					await self.send_messages_payload(payload['messages'], payload['new_page_number'])
 				else:
-					raise ClientError(204, "SOmething went wrong retrieving the chatroom messages.")
+					raise Exception("Something went wrong retrieving the chatroom messages.")
 				await self.display_progress_bar(False)
 			elif command == "get_user_info":
-				room = await get_room_or_error2(content['room_id'], self.scope['user'])
-				payload = get_user_info(room, self.scope['user'])
+				await self.display_progress_bar(True)
+				room = await get_room_or_error2(content['room_id'], self.scope["user"])
+				payload = get_user_info(room, self.scope["user"])
 				if payload != None:
-					payload != json.loads(payload)
+					payload = json.loads(payload)
 					await self.send_user_info_payload(payload['user_info'])
 				else:
 					raise Exception("Something went wrong retrieving the other users account details.")
@@ -443,7 +444,7 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
 		if event["username"]:
 			await self.send_json(
 				{
-					"msg_type": MSG_TYPE_ENTER,
+					"msg_type": MSG_TYPE_ENTER2,
 					"room": event["room_id"],
 					"profile_image": event["profile_image"],
 					"username": event["username"],
@@ -470,7 +471,7 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
 		timestamp = calculate_timestamp(timezone.now())
 		
 		await self.send_json({
-            "msg_type": MSG_TYPE_MESSAGE,
+            "msg_type": MSG_TYPE_MESSAGE2,
             "username": event['username'],
             "user_id": event['user_id'],
             "profile_image": event['profile_image'],
@@ -549,25 +550,25 @@ def get_room_or_error2(room_id, user):
              raise Exception("You must be friends to chat.")
     return room
 
+import json
+
 def get_user_info(room, user):
     """
-    Retrieve the user info for the user you're chatting with."""
+    Retrieve the user info for the user you're chatting with.
+    """
     try:
-        
         # Determine who is who
-        other_user = room.user1
-        if other_user == user:
-            other_user = room.user2
-        payload = {}
+        other_user = room.user1 if room.user1 != user else room.user2
         s = LazyAccountEncoder()
-        payload['user_info'] = s.serialize([other_user])[0]
-
-        # Added indent, sort_keys and default to fix the serializable object type
+        final = s.serialize([other_user])[0]
+        payload = {'user_info': final}
+        # Using dumps() instead of dump() to return JSON as a string
         return json.dumps(payload, indent=4, sort_keys=True, default=str)
 
     except Exception as e:
-         print("EXCEPTION second: " + str(e))
-    return None
+        print("EXCEPTION: " + str(e))
+        return None
+
     
 @database_sync_to_async
 def create_room_chat_message(room, user, message):
@@ -583,7 +584,7 @@ def get_room_chat_messages2(room, page_number):
         new_page_number = int(page_number)
         if new_page_number <= p.num_pages:
             new_page_number = new_page_number + 1
-            s = LaxyRoomChatMessageEncoder()
+            s = LaxyRoomChatMessageEncoder2()
             payload['messages'] = s.serialize(p.page(page_number).objects_list)
         else:
             payload['messages'] = None
@@ -592,4 +593,5 @@ def get_room_chat_messages2(room, page_number):
     except Exception as e:
         print("EXCEPTION last: " + str(e))
     return None
+
 
