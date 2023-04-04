@@ -26,7 +26,7 @@
 							    </button>
 						    </div>
                         {% elif is_friend %}
-                            <a href="{#% url 'chat:chatroom' account %#}" class="btn btn-outline-primary btn-sm">Message</a>
+                            <a onclick='createOrReturnPrivateChat("{{id}}")' class="btn btn-outline-primary btn-sm">Message</a>
                         {% endif %}
                     {% else %}
                         <a href="{% url 'users:profile' account.pk %}" class="btn btn-outline-primary btn-sm">Edit Account</a>
@@ -262,4 +262,5 @@
 {% include "friend/cancel_friend_request.html" %}
 {% include "friend/accept_friend_request.html" %}
 {% include "friend/decline_friend_request.html" %}
+{% include "chat/snippets/create_or_return_private_chat.html" %}
 {% endblock %}
