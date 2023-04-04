@@ -298,7 +298,6 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
 		command = content.get("command", None)
 		try:
 			if command == "join":
-				print("Join Command detected!")
 				await self.join_room(content['room'])
 			elif command == "leave":
 				# Leave the room
@@ -307,7 +306,6 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
 				if len(content['message'].lstrip()) != 0:
 					await self.send_room(content['room'], content['message'])
 			elif command == "get_room_chat_messages":
-				print("ASking for messages!")
 				await self.display_progress_bar(True)
 				room = await get_room_or_error2(content['room_id'], self.scope['user'])
 				payload = await get_room_chat_messages2(room, content['page_number'])
@@ -466,12 +464,11 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
 		Called when someone has messaged our chat.
 		"""
 		# Send a message down to the client
-		print("ChatConsumer: chat_message")
 
 		timestamp = calculate_timestamp(timezone.now())
 		
 		await self.send_json({
-            "msg_type": MSG_TYPE_MESSAGE2,
+            "msg_type": MSG_TYPE_MESSAGE,
             "username": event['username'],
             "user_id": event['user_id'],
             "profile_image": event['profile_image'],
@@ -509,7 +506,6 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
 		2. is_displayed = False
 		- Hide the progress bar on UI
 		"""
-		print("DISPLAY PROGRESS BAR: " + str(is_displayed))
 		await self.send_json(
 			{
 				"display_progress_bar": is_displayed
@@ -585,7 +581,7 @@ def get_room_chat_messages2(room, page_number):
         if new_page_number <= p.num_pages:
             new_page_number = new_page_number + 1
             s = LaxyRoomChatMessageEncoder2()
-            payload['messages'] = s.serialize(p.page(page_number).objects_list)
+            payload['messages'] = s.serialize(p.page(page_number).object_list)
         else:
             payload['messages'] = None
         payload['new_page_number'] = new_page_number
