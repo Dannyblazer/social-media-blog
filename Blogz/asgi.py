@@ -11,7 +11,7 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "Blogz.settings")
 # is populated before importing code that may import ORM models.
 django_asgi_app = get_asgi_application()
 
-from public_chat.consumers import PublicChatConsumer, ChatConsumer
+from public_chat.consumers import PublicChatConsumer, ChatConsumer, NotificationConsumer
 
 application = ProtocolTypeRouter({
     # Django's ASGI application to handle traditional HTTP requests
@@ -21,6 +21,7 @@ application = ProtocolTypeRouter({
     "websocket": AllowedHostsOriginValidator(
         AuthMiddlewareStack(
             URLRouter([
+                re_path(r"/$", NotificationConsumer.as_asgi()),
                 re_path(r"chat/(?P<room_name>\w+)/$", ChatConsumer.as_asgi()),
                 re_path(r"public_chat/$", PublicChatConsumer.as_asgi()),
             ])
