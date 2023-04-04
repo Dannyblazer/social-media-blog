@@ -59,7 +59,7 @@
 				<div class="card-center px-2">
 					<h4 class="card-title">{{account.username}}</h4>
 					
-					<p class="card-text"><a href="#" onclick="createOrReturnPrivateChat('{{account.0.id}}')">Send a Message</a></p>
+					<p class="card-text"><a href="#" onclick="createOrReturnPrivateChat('{{account.id}}')">Send a Message</a></p>
 	
 				</div>
 			</a>
@@ -91,7 +91,7 @@
 </div>
 
 
-{#%  include 'chat/snippets/create_or_return_private_chat.html' %#}
+{% include 'chat/snippets/create_or_return_private_chat.html' %}
 
 
 {% endblock content %}
