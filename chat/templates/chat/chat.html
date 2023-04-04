@@ -57,7 +57,7 @@
 							<img class="profile-image rounded-circle img-fluid" id="id_friend_img_{{x.friend.id}}" src="{% static 'users/20221119_205632_SnvSsK2.jpg' %}" >
 							<div class="d-flex flex-column">
 								<span class="username-span">{{x.friend.username}}</span>
-								<span class="friend-message-span">{{x.message|truncatechars:20}}</span>
+								<span class="friend-message-span">{{x.message.content|truncatechars:20}}</span>
 							</div>
 						</div>
 						{% endfor %}

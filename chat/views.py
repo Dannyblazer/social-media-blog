@@ -23,15 +23,15 @@ def private_chat_room(request, *args, **kwargs):
 		query_string = urlencode({'next': f"/chat/?room_id={room_id}"})
 		url = f"{base_url}?{query_string}"
 		return redirect(url)
+	m_and_f = get_recent_chatroom_messages(user)
 
-	context['m_and_f'] = get_recent_chatroom_messages(user)
-
+	context['m_and_f'] = m_and_f
+	roomz = PrivateChatRoom.objects.filter(pk=room_id).first()
+	context['room'] = roomz
 	context["BASE_URL"] = settings.BASE_URL
 	if room_id:
 		context["room_id"] = room_id
-		print("Chat room id: " + str(room_id))
 	context['debug'] = DEBUG
-	context['debug_mode'] = settings.DEBUG
 	return render(request, "chat/chat.html", context)
 
 def get_recent_chatroom_messages(user):
@@ -53,7 +53,6 @@ def get_recent_chatroom_messages(user):
 			friend = room.user2
 		else:
 			friend = room.user1
-
 		# confirm you are even friends (in case chat is left active somehow)
 		friend_list = FriendList.objects.get(user=user)
 		if not friend_list.is_mutual_friend(friend):
@@ -63,7 +62,8 @@ def get_recent_chatroom_messages(user):
 		else:	
 			# find newest msg from that friend in the chat room
 			try:
-				message = RoomChatMessage.objects.filter(room=room, user=friend).latest("timestamp")
+				message = RoomChatMessage.objects.filter(room=room, user=friend.id).latest('timestamp')
+				print("Here's the message: " + str(message.content))
 			except RoomChatMessage.DoesNotExist:
 				# create a dummy message with dummy timestamp
 				message = RoomChatMessage(

@@ -10,11 +10,13 @@
 		{% if room %}
 			if("{{room.user1}}" == "{{request.user}}"){
 				onSelectFriend("{{room.user2.id}}")
+				console.log("Elsed the room user selection!")
 			}
 			else{
 				onSelectFriend("{{room.user1.id}}")
 			}
 		{% else %}
+			console.log("No room sent!!!")
 			{% if m_and_f %}
 				onSelectFriend("{{m_and_f.0.friend.id}}")
 			{% endif %}
@@ -70,7 +72,7 @@ function closeWebSocket(){
 		if(pageNumber != "-1"){
 			setPageNumber("-1")
 			chatSocket.send(JSON.stringify({
-				"command": "get_room_messages",
+				"command": "get_room_chat_messages",
 				"room_id": roomId,
 				"page_number": pageNumber
 			}))
@@ -79,38 +81,33 @@ function closeWebSocket(){
 
 	function handleMessagesPayload(messages, new_page_number){
 		if(messages != null && messages != "undefined" && messages != "None"){
-			appendChatMessage(message, true, false)
+			setPageNumber(new_page_number)
+			messages.forEach(function(message){
+				appendChatMessage(message, true, false)
+			})
+		}
+		else{
+			setPaginationExhausted()
 		}
 	}
 
-	function createOrReturnPrivateChat(id){
-		payload = {
-			"csrfmiddlewaretoken": "{{ csrf_token }}",
-			"user2_id": id,
+	var chatlog = document.getElementById("id_chat_log")
+	chatlog.addEventListener("scroll", function(e){
+		if((Math.abs(chatlog.scrollTop) + 2) >= (chatlog.scrollHeight - chatlog.offsetHeight) -2 ){
+			getRoomChatMessages()
 		}
-		$.ajax({
-			type: 'POST',
-			dataType: "json",
-			url: "{% url 'chat:create-or-return-private-chat' %}", // production
-			data: payload,
-			timeout: 5000,
-			success: function(data) {
-				console.log("SUCCESS", data)
-				if(data['response'] == "Successfully got the chat."){
-					chatroomId = data['chatroom_id']
-					OnGetOrCreateChatroomSuccess(chatroomId)
-				}
-				else if(data['response'] != null){
-					alert(data['response'])
-				}
-			},
-			error: function(data) {
-				console.error("ERROR...", data)
-				alert("Something went wrong.")
-			},
-		});
-	}
+	})
+	
+	function displayChatroomLoadingSpinner(isDisplayed){
+		var spinner = document.getElementById("id_chatroom_loading_spinner")
+		if(isDisplayed){
+			spinner.style.display = "block"
+		}
+		else{
+			spinner.style.display = "none"
+		}
 
+	}
 
 	function OnGetOrCreateChatroomSuccess(chatroomId){
 			var url = "{% url 'chat:private-chatroom' %}?room_id=" + chatroomId
@@ -131,7 +128,7 @@ function closeWebSocket(){
 
 		// Correctly decide between ws:// and wss://
 		var ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
-		{% if debug_mode %}
+		{% if debug %}
 			var ws_path = ws_scheme + '://' + window.location.host + "/chat/" + roomId + "/"; // development
 		{% else %}
 			var ws_path = ws_scheme + '://' + window.location.host + ":8001/chat/" + roomId + "/"; // production
@@ -145,11 +142,10 @@ function closeWebSocket(){
 		chatSocket.onmessage = function(message) {
 			// Decode the JSON
 			// console.log("Got chat websocket message " + message.data);
-			console.log("Got websocket message.");
 			var data = JSON.parse(message.data);
 
 			// display the progress bar?
-			// displayChatroomLoadingSpinner(data.display_progress_bar)
+			displayChatroomLoadingSpinner(data.display_progress_bar)
 
 			// Handle errors (ClientError)
 			if (data.error) {
@@ -253,6 +249,7 @@ function closeWebSocket(){
 		var url = "{% url 'users:profile_view' 654546565 %}".replace("654546565", user_id)
 	}
 
+
 	function appendChatMessage(data, maintainPosition, isNewMessage){
 		messageType = data.msg_type
 		msg_id = data.msg_id
@@ -261,8 +258,6 @@ function closeWebSocket(){
 		user_id = data.user_id
 		profile_image = data.profile_image
 		timestamp = data.natural_timestamp
-		console.log("append new chat message: " + messageType)
-
 		username = uName + ": "
 		msg = message + "\n"
 		createChatMessageElement(msg, msg_id, username, profile_image, user_id, timestamp, maintainPosition, isNewMessage)
