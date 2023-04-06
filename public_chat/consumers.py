@@ -13,7 +13,7 @@ from chat.models import UnreadChatRoomMessages
 from notification.constants import *
 from notification.models import Notification
 from chat.constants import *
-from friend.models import FriendList
+from friend.models import FriendList, FriendRequest
 from chat.models import PrivateChatRoom, RoomChatMessage
 from public_chat.models import PublicChatRoom, PublicRoomChatMessage, PublicRoomChatMessage
 from public_chat.constants import *

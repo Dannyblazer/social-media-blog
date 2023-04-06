@@ -3,69 +3,46 @@
 
 {% block content %}
 
-    <style type="text/css" >
-      
+{% include 'snippets/css/login_css.html' %}
 
-  .form-signin {
-    max-width: 330px;
-    padding: 15px;
-  }
-
-  .form-signin .form-floating:focus-within {
-    z-index: 2;
-  }
-
-  .form-signin input[type="email"] {
-    margin-bottom: 5px;
-    border-bottom-right-radius: 0;
-    border-bottom-left-radius: 0;
-  }
-
-  .h3{
-        text-align: center;
-    }
-
-  .form-signin input[type="password"] {
-    margin-bottom: 10px;
-    border-top-left-radius: 0;
-    border-top-right-radius: 0;
-  }
-
-  </style>
-
-  <main class="form-signin w-100 m-auto">
-    <form method="POST">
-      {% csrf_token %}
-    <h1 class="h3 mb-3 fw-normal">Login</h1>
-
-    <div class="form-floating">
-      <input type="email" name="email" class="form-control" id="floatingInput" placeholder="name@example.com">
-      <label for="floatingInput">Email address</label>
-    </div>
-    <div class="form-floating">
-      <input type="password" name="password" class="form-control" id="floatingPassword" placeholder="Password">
-      <label for="floatingPassword">Password</label>
-    </div>
-      {% for field in form %}
-        <p>
-          {% for error in field.errors %}
-              <p style="color: red;">{{error}}</p>
-          {% endfor %}
-        </p>
-      {% endfor %}
-      {% if form.non_field_errors %}
-        <p style="color: red;">{{form.non_field_errors}}</p>
-      {% endif %}
-
-      <button class="w-100 btn btn-lg btn-primary" type="submit">login</button>
-
-    </form>
-      <br>
-    <div class="d-flex flex-column">
-      <a class="m-auto" href="{% url 'password_reset' %}">Forgot Password?</a>
-    </div>
+    <section>
+      <div class="form-box">
+        <div class="form-value">
+          <form method="POST">
+            {% csrf_token %}
+            <h2>Login</h2>
+            <div class="inputbox">
+              <input type="email", name='email', required>
+              <label for="">Email</label>
+            </div>
+            <div class="inputbox">
+              <input type="password", name='password', required>
+              <label for="">Password</label>
+            </div>
+            <button>Log in</button>
+            <div class="register">
+              <p>Don't have an account? <a href="#">Register</a></p>
+            </div>
+            <div class="forgot">
+              <label for=""><a class="m-auto" href="{% url 'password_reset' %}">Forgot Password?</a></label>
+            </div>
+          </form>
+          {% for field in form %}
+          <p>
+            {% for error in field.errors %}
+                <p style="color: red;">{{error}}</p>
+            {% endfor %}
+          </p>
+        {% endfor %}
+        {% if form.non_field_errors %}
+          <p style="color: red;">{{form.non_field_errors}}</p>
+        {% endif %}
+        </div>
+      </div>
+     
     
-  </main>
+    </section>
+    <!-- Remember to include ionicons /esn.js & ionicons.js-->
   
   {% endblock %}
   
