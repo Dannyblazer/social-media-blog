@@ -12,7 +12,9 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 from django.utils import timezone
 from pathlib import Path
 import zoneinfo
+import redis
 import os
+import dj_database_url, dj_redis_url
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -24,12 +26,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-1iymg#b-c^ykt*j*uez5y@yps#9h^mj1%d%)1*b7-0iciuu+83'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = 'Blogz' not in os.environ
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["social-blog-chin.onrender.com"]
 
 if DEBUG:
     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend' # During development only
+
 
 # Application definition
 
@@ -71,6 +74,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
 
 ROOT_URLCONF = 'Blogz.urls'
@@ -112,13 +116,10 @@ AUTHENTICATION_BACKENDS = (
 WSGI_APPLICATION = 'Blogz.wsgi.application'
 
 
-CRISPY_TEMPLATE_PACK = 'bootstrap4'
-
-
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
-DB_NAME = "django_chatapp"
+""" DB_NAME = "django_chatapp"
 DB_USER = "django"
 DB_PASSWORD = "Chocolateboy"
 DATABASES = {
@@ -131,15 +132,25 @@ DATABASES = {
         'PORT': '5432',
     }
 }
-ASGI_APPLICATION = 'Blogz.asgi.application'
-CHANNEL_LAYERS = {
-	"default": {
-		"BACKEND": "channels_redis.core.RedisChannelLayer",
-        "CONFIG": {
-            'hosts':[('127.0.0.1', 6379)],
-        },
-	},
+ """
+
+DATABASES = {
+    'default': dj_database_url.parse(os.environ.get("DATABASE_URL"))
 }
+
+ASGI_APPLICATION = 'Blogz.asgi.application'
+
+CHANNEL_LAYERS = {
+    'default': dj_redis_url.parse(os.environ.get("REDIS_URL"))
+}
+
+
+# Connect to your internal Redis instance using the REDIS_URL environment variable
+# The REDIS_URL is set to the internal Redis URL e.g. redis://red-343245ndffg023:6379
+r = redis.from_url(os.environ['REDIS_URL'])
+
+r.set('key', 'redis-py')
+r.get('key')
 
 
 # Password validation
@@ -185,12 +196,24 @@ STATICFILES_DIRS = [
 
 STATIC_URL = '/static/'
 MEDIA_URL = '/media/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'static_cdn')
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media_cdn')
+
+
+if not DEBUG:
+    # Tell Django to copy statics to the `staticfiles` directory
+    # in your application directory on Render.
+    STATIC_ROOT = os.path.join(BASE_DIR, 'static_cdn')
+
+    # Turn on WhiteNoise storage backend that takes care of compressing static files
+    # and creating unique names for each version so they can safely be cached forever.
+    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+else:
+    STATIC_ROOT = os.path.join(BASE_DIR, 'static_cdn')
+    MEDIA_ROOT = str(os.path.join(BASE_DIR, 'media_cdn'))
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 TEMP = os.path.join(BASE_DIR, 'media_cdn/temp')
-BASE_URL = 'http://127.0.0.1:8000/'
+BASE_URL = 'http://' + ALLOWED_HOSTS[0]
