@@ -26,7 +26,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-1iymg#b-c^ykt*j*uez5y@yps#9h^mj1%d%)1*b7-0iciuu+83'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = 'Blogz' not in os.environ
+DEBUG = False
 
 ALLOWED_HOSTS = ["social-blog-chin.onrender.com"]
 
