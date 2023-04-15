@@ -36,7 +36,7 @@
 				
 			</div>
 			<div class="card-footer text-muted">
-			  Updated {{blog_post.whenpublished}} by <a href="{% url 'users:profile_view' blog_post.author.username %}" >{{blog_post.author}}</a>
+			  Updated {{blog_post.whenpublished}} by <a href="{% url 'users:profile_view' blog_post.author.username %}" >{{blog_post.author.username}}</a>
 			</div>
 		</div>
 	</div>
