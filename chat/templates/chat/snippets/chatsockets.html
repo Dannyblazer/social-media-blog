@@ -266,7 +266,7 @@ function closeWebSocket(){
 	function createChatMessageElement(msg, msg_id, username, profile_image, user_id, timestamp, maintainPosition, isNewMessage){
 		var chatlog = document.getElementById("id_chat_log")
 		var newMessageDiv = document.createElement("div")
-		newMessageDiv.classList.add("d-flex", "flex-row", "message-container")
+		newMessageDiv.classList.add("d-flex", "flex-row")
 
 		var profileImage = document.createElement("img")
 		profileImage.addEventListener("click", function(e){
@@ -280,7 +280,7 @@ function closeWebSocket(){
 		newMessageDiv.appendChild(profileImage)
 
 		var div1 = document.createElement("div")
-		div1.classList.add("d-flex", "flex-column")
+		div1.classList.add("d-flex", "flex-column", "messagebox")
 
 		var div2 = document.createElement("div")
 		div2.classList.add("d-flex", "flex-row")
