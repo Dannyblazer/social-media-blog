@@ -1074,4 +1074,4 @@ def get_unread_chat_notification_count(user):
         return json.dumps(payload)
     else:
         raise ClientError("AUTH_ERROR", "User must be authenticated to get notifications.")
-    return None
+
