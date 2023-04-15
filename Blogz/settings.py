@@ -14,7 +14,7 @@ from pathlib import Path
 import zoneinfo
 import redis
 import os
-import dj_database_url, dj_redis_url
+import dj_database_url
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -26,7 +26,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-1iymg#b-c^ykt*j*uez5y@yps#9h^mj1%d%)1*b7-0iciuu+83'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
 
@@ -119,7 +119,7 @@ WSGI_APPLICATION = 'Blogz.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
-""" DB_NAME = "django_chatapp"
+DB_NAME = "django_chatapp"
 DB_USER = "django"
 DB_PASSWORD = "Chocolateboy"
 DATABASES = {
@@ -132,11 +132,7 @@ DATABASES = {
         'PORT': '5432',
     }
 }
- """
 
-DATABASES = {
-    'default': dj_database_url.parse(os.environ.get("DATABASE_URL"))
-}
 
 ASGI_APPLICATION = 'Blogz.asgi.application'
 
@@ -144,7 +140,7 @@ CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
-            "hosts": [("red-cgoa388u9tun42o97hdg", 6379)],
+            "hosts": [("127.0.0.1", 6379)],
         },
     },
 }
@@ -218,4 +214,4 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 TEMP = os.path.join(BASE_DIR, 'media_cdn/temp')
-BASE_URL = str('http://' + ALLOWED_HOSTS[0])
+BASE_URL = 'http://127.0.0.1:8000'
