@@ -31,7 +31,7 @@
 
 <script type="text/javascript">
 	
-	const GENERAL_NOTIFICATION_INTERVAL = 60000
+	const GENERAL_NOTIFICATION_INTERVAL = 6000
 	const GENERAL_NOTIFICATION_TIMEOUT = 5000
 
 	// Keep track of what notifications are currently visible to the user.
@@ -747,6 +747,7 @@
 			seconds = "0" + seconds
 		}
 		var ms = "000000"
+		// yyyy-MM-dd 8:40:10.3245
 		var date = today.getFullYear()+'-'+month+'-'+day + " " + hours + ":" + minutes + ":" + seconds + "." + ms
 		document.getElementById("id_general_oldest_timestamp").innerHTML = date
 		document.getElementById("id_general_newest_timestamp").innerHTML = date
