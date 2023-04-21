@@ -636,11 +636,11 @@ class NotificationConsumer(AsyncJsonWebsocketConsumer):
 		print("NotificationConsumer: receive_json. Command: " + command)
 		try:
 			if command == "get_general_notifications":
-				payload = await get_general_notifications(self.scope["user"], content.get("page_number", None))
-				if payload == None:
+				payload1 = await get_general_notifications(self.scope["user"], content.get("page_number", None))
+				if payload1 == None:
 					await self.general_pagination_exhausted()
 				else:
-					payload = json.loads(payload)
+					payload = json.loads(payload1)
 					await self.send_general_notifications_payload(payload['notifications'], payload['new_page_number'])
 			elif command == "get_new_general_notifications":
 				payload = await get_new_general_notifications(self.scope["user"], content.get("newest_timestamp", None))
