@@ -120,7 +120,7 @@ def cancel_friend_request(request, *args, **kwargs):
     user = request.user
     payload = {}
     if request.method == 'POST' and user.is_authenticated:
-        user_id = request.POST.get["receiver_user_id"]
+        user_id = request.POST["receiver_user_id"]
         if user_id:
             receiver = Account.objects.get(pk=user_id)
             try:
