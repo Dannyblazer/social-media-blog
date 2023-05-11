@@ -93,6 +93,7 @@ def blog_like(request, pk):
 
 def create_comment(request, blog_id):
 	context = {}
+
 	if not request.user.is_authenticated:
 		return redirect('users:must_authenticate')
 	blog_post = get_object_or_404(BlogPost, pk=blog_id)
