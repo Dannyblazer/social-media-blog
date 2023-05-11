@@ -12,6 +12,19 @@
         float: right;
         margin-top: 10px;
     }
+    #commentos{
+        margin-top: 20px;
+    }
+    .comment-text, .reply-section{
+        display: inline-block;
+    }
+    .commented-section{
+        position: relative;
+        background-color: rgb(229, 241, 237);
+        padding-top: 8px;
+        padding-left: 10px;
+        border-radius: 20px;
+    }
     .commentz{
         font-size: large;
         padding-bottom: 5px;
@@ -47,22 +60,43 @@
                         <p><a href="{% url 'users:registration_view' %}">Log in</a> to like or comment</p>
                     {% endif %}
                 {% if not blog_comments %}
-                    {% include 'blog/snippets/crt_comment.html' %}
+                    <div id="commentos">
+                        <form id="comment-form" method="post" action="" enctype="multipart/form-data">
+                        {% csrf_token %}  
+                            <!-- Body -->
+                            <div class="form-group">
+                                <textarea name="body" class="form-control" placeholder="Comment" required ></textarea>
+                            </div>
+                            <!-- Submit btn -->
+                            <button id="postee" class="submit btn btn-sm btn-primary btn-block" type="submit">Post</button>
+                        </form>
+                    </div>
                 {% else %}
                     {% for coms in blog_comments%}
                     <div class="commented-section mt-2">
                         <div class="d-flex flex-row align-items-center commented-user">
-                            <h5 class="mr-2"><strong>{{ coms.author.username }}</strong> {{coms.whenpublished}} </h5></div>
-                        <div class="comment-text-sm"><span>{{ coms.body }}</span></div>
+                            <h5 class="mr-2"><strong>{{ coms.author.username }}</strong>: {{coms.whenpublished}} </h5>
+                        </div>
+                        <div class="comment-text"><span>{{ coms.body }}</span></div>
                         <div class="reply-section">
-                            <div class="d-flex flex-row align-items-center voting-icons"><span class="dot ml-2"></span>
+                            <div class="d-flex flex-row align-items-center deleting"><span class="dot ml-2"></span>
                                 <h6 class="ml-2 mt-1">{% if coms.author == request.user %}<a href="{% url 'blog:delete_comment' coms.pk %}">Delete</a> {% endif %}</h6>
                             </div>
                         </div>
                     </div>
                 {% endfor %}
-                {% include 'blog/snippets/crt_comment.html'%}
-            {%endif%}
+                <div id="commentos">
+                    <form id="comment-form" method="post" action="" enctype="multipart/form-data">
+                      {% csrf_token %}  
+                        <!-- Body -->
+                        <div class="form-group">
+                            <textarea name="body" class="form-control" placeholder="Comment" required ></textarea>
+                        </div>
+                        <!-- Submit btn -->
+                        <button id="postee" class="submit btn btn-sm btn-primary btn-block" type="submit">Post</button>
+                    </form>
+                  </div>
+            {% endif %}
         </div>
         <br>
         <div class="card-footer text-muted">
