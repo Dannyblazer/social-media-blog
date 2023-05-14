@@ -5,7 +5,6 @@ from blog.forms import CreateBlogPostForm, UpdateBlogPostForm, CommentForm
 from blog.models import BlogPost, Comment
 from django.http import HttpResponse
 from django.db.models import Q
-import requests
 # Create your views here.
 
 
@@ -38,6 +37,7 @@ def detail_blog_view(request, slug):
 	context['blog_id'] = blog_post.id
 	context['blog_comments'] = blog_comments
 	return render(request, 'blog/detail_blog.html', context)
+
 
 def edit_blog_view(request, slug):
 
@@ -78,6 +78,7 @@ def get_blog_queryset(query=None):
 	return list(set(queryset)) 
 
 def blog_like(request, pk):
+	print("Likee!")
 	if request.method == "POST":
 		instance = get_object_or_404(BlogPost, pk=pk)
 		if not instance.likes.filter(id=request.user.id).exists():
