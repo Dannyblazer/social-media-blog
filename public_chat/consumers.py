@@ -495,7 +495,7 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
 		"""
 		Send a payload of user information to the ui
 		"""
-		print("ChatConsumer: send_user_info_payload. ")
+		# print("ChatConsumer: send_user_info_payload. ")
 		await self.send_json(
 			{
 				"user_info": user_info,
@@ -565,7 +565,7 @@ def get_user_info(room, user):
         return json.dumps(payload, indent=4, sort_keys=True, default=str)
 
     except Exception as e:
-        print("EXCEPTION: " + str(e))
+        # print("EXCEPTION: " + str(e))
         return None
 
     
@@ -616,7 +616,7 @@ class NotificationConsumer(AsyncJsonWebsocketConsumer):
 		"""
 		Called when the websocket is handshaking as part of initial connection.
 		"""
-		print("NotificationConsumer: connect: " + str(self.scope["user"]) )
+		# print("NotificationConsumer: connect: " + str(self.scope["user"]) )
 		await self.accept()
 
 
@@ -633,7 +633,7 @@ class NotificationConsumer(AsyncJsonWebsocketConsumer):
 		for us and pass it as the first argument.
 		"""
 		command = content.get("command", None)
-		print("NotificationConsumer: receive_json. Command: " + command)
+		# print("NotificationConsumer: receive_json. Command: " + command)
 		try:
 			if command == "get_general_notifications":
 				payload1 = await get_general_notifications(self.scope["user"], content.get("page_number", None))
@@ -705,7 +705,7 @@ class NotificationConsumer(AsyncJsonWebsocketConsumer):
 			pass
 
 	async def display_progress_bar(self, shouldDisplay):
-		print("NotificationConsumer: display_progress_bar: " + str(shouldDisplay)) 
+		# print("NotificationConsumer: display_progress_bar: " + str(shouldDisplay)) 
 		await self.send_json(
 			{
 				"progress_bar": shouldDisplay,
@@ -826,7 +826,7 @@ class NotificationConsumer(AsyncJsonWebsocketConsumer):
 		"""
 		Called by receive_json when pagination is exhausted for chat notifications
 		"""
-		print("Chat Pagination DONE... No more notifications.")
+		# print("Chat Pagination DONE... No more notifications.")
 		await self.send_json(
 			{
 				"chat_msg_type": CHAT_MSG_TYPE_PAGINATION_EXHAUSTED,
@@ -1022,7 +1022,7 @@ def get_chat_notifications(user, page_number):
 
 		# sleep 1s for testing
 		# sleep(1)  
-		print("PAGES: " + str(p.num_pages))
+		# print("PAGES: " + str(p.num_pages))
 		payload = {}
 		if len(notifications) > 0:
 			if int(page_number) <= p.num_pages:
