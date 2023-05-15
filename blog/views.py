@@ -78,7 +78,6 @@ def get_blog_queryset(query=None):
 	return list(set(queryset)) 
 
 def blog_like(request, pk):
-	print("Likee!")
 	if request.method == "POST":
 		instance = get_object_or_404(BlogPost, pk=pk)
 		if not instance.likes.filter(id=request.user.id).exists():

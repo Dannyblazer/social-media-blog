@@ -11,6 +11,9 @@
     #postee{
         float: right;
         margin-top: 10px;
+        margin-left: 10px;
+        width: 100px;
+        height: auto;
     }
     #commentos{
         margin-top: 20px;
@@ -26,6 +29,9 @@
         padding-left: 10px;
         border-radius: 20px;
     }
+    #likeez{
+        margin-right: 10px;
+    }
     .commentz{
         font-size: large;
         padding-bottom: 5px;
@@ -38,6 +44,9 @@
     a:hover,
     a:active {
       text-decoration: none;
+    }
+    #comment-form{
+        display: inline-flex;
     }
 </style>
 
@@ -66,7 +75,7 @@
                         {% csrf_token %}  
                             <!-- Body -->
                             <div class="form-group">
-                                <textarea name="body" class="form-control" placeholder="Comment" required ></textarea>
+                                <textarea name="body" class="form-control" placeholder="Comment..." required ></textarea>
                             </div>
                             <!-- Submit btn -->
                             <button id="postee" class="submit btn btn-sm btn-primary btn-block" type="submit">Post</button>
@@ -91,9 +100,8 @@
                       {% csrf_token %}  
                         <!-- Body -->
                         <div class="form-group">
-                            <textarea name="body" class="form-control" placeholder="Comment" required ></textarea>
+                            <input name="body" class="form-control" placeholder="Comment..." required >
                         </div>
-                        <!-- Submit btn -->
                         <button id="postee" class="submit btn btn-sm btn-primary btn-block" type="submit">Post</button>
                     </form>
                   </div>

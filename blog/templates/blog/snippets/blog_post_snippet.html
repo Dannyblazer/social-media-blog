@@ -5,6 +5,18 @@
 	.card-body{
 		padding: 20px;
 		width: 100%;
+		background-color: rgb(229, 241, 237);
+	}
+	.card-text{
+		background-color: rgb(206, 202, 196);
+		padding: 10px;
+		border-radius: 20px;
+	}
+	.card-title{
+		text-shadow: 0 0 3px #FF0000;
+	}
+	.mainee{
+		box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 	}
 	a:link,
     a:visited,
@@ -14,7 +26,7 @@
     }
 </style>
 {% if blog_post %}
-<div class="container">
+<div class="container mainee">
 	<div class="row">
 
 		<!-- Blog Post -->
@@ -42,7 +54,7 @@
 	</div>
 </div>
 {% else %}
-<div class="container">
+<div class="container mainee">
 	<div class="row">
 		<div class="card m-auto">
 			<div class="card-body mt-2 mb-2">

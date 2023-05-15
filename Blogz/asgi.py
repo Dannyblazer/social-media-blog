@@ -11,8 +11,9 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "Blogz.settings")
 # is populated before importing code that may import ORM models.
 django_asgi_app = get_asgi_application()
 
-from public_chat.consumers import PublicChatConsumer, ChatConsumer, NotificationConsumer
-
+from public_chat.consumers import PublicChatConsumer
+from chat.consumers import ChatConsumer
+from notification.consumers import NotificationConsumer
 application = ProtocolTypeRouter({
     # Django's ASGI application to handle traditional HTTP requests
     "http": django_asgi_app,
