@@ -70,17 +70,16 @@
                         <p><a href="{% url 'users:registration_view' %}">Log in</a> to like or comment</p>
                     {% endif %}
                 {% if not blog_comments %}
-                    <div id="commentos">
-                        <form id="comment-form" method="post" action="" enctype="multipart/form-data">
-                        {% csrf_token %}  
-                            <!-- Body -->
-                            <div class="form-group">
-                                <textarea name="body" class="form-control" placeholder="Comment..." required ></textarea>
-                            </div>
-                            <!-- Submit btn -->
-                            <button id="postee" class="submit btn btn-sm btn-primary btn-block" type="submit">Post</button>
-                        </form>
-                    </div>
+                <div id="commentos">
+                    <form id="comment-form" method="post" action="" enctype="multipart/form-data">
+                      {% csrf_token %}  
+                        <!-- Body -->
+                        <div class="form-group">
+                            <input name="body" class="form-control" placeholder="Comment..." required >
+                        </div>
+                        <button id="postee" class="submit btn btn-sm btn-primary btn-block" type="submit">Post</button>
+                    </form>
+                  </div>
                 {% else %}
                     {% for coms in blog_comments%}
                     <div class="commented-section mt-2">
