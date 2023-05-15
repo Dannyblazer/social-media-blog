@@ -28,6 +28,10 @@
 	.left-column{
 		padding:0px;
 	}
+	#cardee{
+		border: none;
+		border-radius: 40px 10px;
+	}
 
 	.right-column{
 		padding:0px;
@@ -45,7 +49,7 @@
 
 			<!-- Top 'create post' bar -->
 			<div class="d-lg-none mb-3">
-				<div class="card m-auto d-flex flex-column p-3" id="">
+				<div class="card m-auto d-flex flex-column p-3" id="cardee">
 					<img class="img-fluid d-block m-auto pb-2" src="{% static 'users/blaze.png' %}" alt="Eagle No show" width="72" height="72">
 					<p class="lead">This is a form of cooperative multitasking. The program is yielding control of its current context so that something else
 						can run. In this case, it allows the while loop in main() to run two instances of task() as a generator function.</p>
@@ -72,9 +76,9 @@
 
 
 		<!-- Right 'create post' column  -->
-		<div class="right-column col-lg-3 d-lg-flex d-none flex-column">
+		<div class="right-column col-lg-3 d-lg-flex d-none flex-column cardee">
 			<div class="position-sticky" style="top: 2rem;">
-			<div class="card create-post-bar d-flex flex-column p-3">
+			<div class="card create-post-bar d-flex flex-column p-3" id="cardee">
 				<img class="img-fluid d-block m-auto pb-2" src="{% static 'users/blaze.png' %}" width="72" height="72">
 				<p class="lead">This is a form of last cooperative multitasking. The program is yielding control of its current context so that something else
 					can run. In this case, it allows the while loop in main() to run two instances of task() as a generator function.</p>
