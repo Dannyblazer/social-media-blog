@@ -141,6 +141,14 @@ function createChatMessageElement(msg, msg_id, username, profile_image, user_id,
 		newMessageDiv.classList.add("flex-row")
 		newMessageDiv.classList.add("message-container")
 
+		var owner = "{{request.user.id}}"
+		if(owner == user_id){
+			newMessageDiv.style.justifyContent = "end";
+		}
+		else{
+			newMessageDiv.style.justifyContent = "start";
+		}
+
 		var profileImage = document.createElement("img")
 		profileImage.addEventListener("click", function(e){
 			selectUser(username)
