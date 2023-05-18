@@ -18,6 +18,15 @@
     #commentos{
         margin-top: 20px;
     }
+    .splice{
+        display: flex;
+        flex-direction: row-reverse;
+        justify-content: start;
+    }
+    #buttom{
+        margin: 0px 0px 10px 10px;
+
+    }
     .comment-text, .reply-section{
         display: inline-block;
         margin-bottom: 10px;
@@ -59,8 +68,9 @@
         <div class="card-body my-2">
             <h2 class="card-title">{{ blog_post.title }}</h2>
                 <p class="card-text">{{ blog_post.body|safe}}</p>
+                    <div class="splice">
                         {% if blog_post.author == request.user %}
-                            <a href="{% url 'blog:edit' blog_post.slug %}" class="btn btn-primary">Update</a>
+                            <a href="{% url 'blog:edit' blog_post.slug %}" class="btn btn-primary" id="buttom">Update</a>
                         {% endif %}
                         {% if request.user.is_authenticated %}
                         <div class="like">
@@ -69,6 +79,7 @@
                         {% else %}
                         <p><a href="{% url 'users:registration_view' %}">Log in</a> to like or comment</p>
                     {% endif %}
+                    </div>
                 {% if not blog_comments %}
                 <div id="commentos">
                     <form id="comment-form" method="post" action="" enctype="multipart/form-data">
