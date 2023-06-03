@@ -292,6 +292,8 @@
 
 		var div1 = document.createElement("div")
 		div1.classList.add("d-flex", "flex-row", "align-items-start")
+		div1.style.justifyContent = "space-between"
+		div1.style.gap = "10px"
 		div1.id = assignGeneralDiv1Id(notification)
 
 		img = createGeneralProfileImageThumbnail(notification)
@@ -341,6 +343,8 @@
 			div1 = document.createElement("div")
 			div1.classList.add("d-flex", "flex-row", "align-items-start")
 			div1.id = assignGeneralDiv1Id(notification)
+			div1.style.justifyContent = "space-between"
+			div1.style.gap = "10px"
 			
 			img = createGeneralProfileImageThumbnail(notification)
 			div1.appendChild(img)
@@ -354,10 +358,12 @@
 
 			div2 = document.createElement("div")
 			div2.classList.add("d-flex", "flex-row", "mt-2")
+			div2.style.marginLeft = "10px"
 			div2.id = assignGeneralDiv2Id(notification)
 
 			pos_action = document.createElement("a")
 			pos_action.classList.add("btn", "btn-primary", "mr-2")
+			pos_action.style.marginRight = "10px"
 			pos_action.href = "#"
 			pos_action.innerHTML = "Accept"
 			pos_action.addEventListener("click", function(e){
@@ -384,6 +390,8 @@
 			var div1 = document.createElement("div")
 			div1.classList.add("d-flex", "flex-row", "align-items-start")
 			div1.id = assignGeneralDiv1Id(notification)
+			div1.style.justifyContent = "space-between"
+			div1.style.gap = "10px"
 			img = createGeneralProfileImageThumbnail(notification)
 			img.id = assignGeneralImgId(notification)
 			div1.appendChild(img)
@@ -462,6 +470,7 @@
 		var timestamp = document.createElement("p")
 		timestamp.classList.add("small", "pt-2", "timestamp-text")
 		timestamp.innerHTML = notification['natural_timestamp']
+		timestamp.style.marginLeft = "10px"
 		timestamp.id = assignGeneralTimestampId(notification)
 		return timestamp
 	}
