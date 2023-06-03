@@ -86,7 +86,8 @@
                         <div class="post">
                             <textarea class="form-control" placeholder="Post" rows="4"></textarea>
                             <div class="post-options">
-                                <a href="#"><i class="fas fa-video"></i></a>
+                                <a href="#"><i class="fa fa-photo"></i></a>
+                                <a href="#"><i class="fa fa-file"></i></a>
                                 <a href="#"><i class="fa fa-music"></i></a>
                                 <button class="btn btn-outline-success" id="postee">Post</button>
                             </div>
@@ -128,7 +129,13 @@
                                             </div>
                                         {% endfor %}
                                     {% endif %}
-                                    <textarea class="form-control" placeholder="Comment"></textarea>
+                                        <form id="comment-form" method="post" action="" enctype="multipart/form-data">
+                                            {% csrf_token %}  
+                                            <div class="form-group">
+                                                <input name="body" class="form-control" placeholder="Comment..." required >
+                                            </div>
+                                            <button id="postee" class="submit btn btn-sm btn-primary btn-block" type="submit" onclick="">Post</button>
+                                        </form>
                                     </div>
                                 </div>
                             </div>
@@ -263,4 +270,5 @@
 {% include "friend/accept_friend_request.html" %}
 {% include "friend/decline_friend_request.html" %}
 {% include "chat/snippets/create_or_return_private_chat.html" %}
+{% include "snippets/profileComments.html" %}
 {% endblock %}

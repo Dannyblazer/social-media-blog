@@ -1,9 +1,9 @@
 <script type="text/javascript">
-
+    blog_id = document.getElementById("comment").innerHTML
     $(document).ready(function() {
         $("#comment-form").on("submit", function(event) {
             var form = $(this);
-            var url = "{% url 'blog:create_comment' blog_post.id %}";
+            var url = "{% url 'blog:create_comment' 654546565 %}".replace("654546565", blog_id);
             var data = form.serialize();
     
             $.ajax({

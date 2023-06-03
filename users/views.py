@@ -124,7 +124,6 @@ def account_view(request, *args, **kwargs):
         context['friend_requests'] = friend_requests
         context['account'] = acct
         context["blog_posts"] = blog_posts
-        context['server_list'] = server_list
         return render(request, "users/profile.html", context)
 
 def must_authenticate_view(request):
