@@ -34,6 +34,7 @@
          position: relative;
            text-align: center;
            cursor:pointer;
+           margin-bottom: 10px;
      }
  
      .image-group:hover .image {
@@ -51,15 +52,17 @@
        font-size: 15px;
        padding: 15px;
      }
+     .form-body{
+        margin-bottom: 10px;
+     }
  </style>
  
  <div class="container">
      <div class="row">
          <div class="col-lg-7 offset-lg-1">
  
-             {% if success_message %}
-                 <h3 style="color:green; text-align: center;">{{success_message}}</h3>
-             {% endif %}
+             
+                 <h3 style="color:green; text-align: center;" id="success"></h3>
  
              <form class="create-form" method="post" enctype="multipart/form-data">{% csrf_token %}
  
@@ -70,7 +73,7 @@
                  </div>
  
                  <!-- Body -->
-                 <div class="form-group">
+                 <div class="form-group form-body">
                      <label for="id_body">Content</label>
                      <textarea class="form-control" rows="10" type="text" name="body" id="id_body" placeholder="This blog is about..." 
                      required>{{form.initial.body}}</textarea>
@@ -100,13 +103,16 @@
                  {% endif %}
  
                  <!-- Submit btn -->
-                 <button class="submit-button btn btn-lg btn-primary btn-block" id="submission" type="submit">Update</button>
+                 <button class="submit-button btn btn-lg btn-primary btn-block" id="submission" type="submit" onclick="">Update</button>
              </form>	
          </div>
      </div>
  </div>
  
  <script type="text/javascript">
+    function success_message(){
+        document.getElementById('success').innerHTML = "Updated"
+    }
      document.getElementById('id_image_group').onclick = function(event){
          document.getElementById('id_image_file').click();
      };
@@ -122,6 +128,8 @@
      }
      document.getElementById('submission').onclick = function(event){
         location.reload()
+        success_message()
+
      }
  </script>
 
