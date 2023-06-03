@@ -1,0 +1,27 @@
+<script type="text/javascript">
+
+    $(document).ready(function() {
+        $("#comment-form").on("submit", function(event) {
+            var form = $(this);
+            var url = "{% url 'blog:create_comment' blog_post.id %}";
+            var data = form.serialize();
+    
+            $.ajax({
+                url: url,
+                type: "POST",
+                data: data,
+                success: function(response) {
+                    form.trigger("reset");
+                    $("#comment-section").prepend(response);
+                },
+                error: function(xhr) {
+                    console.log(xhr.responseText);
+                },
+                complete: function(data){
+                    
+                },
+            });
+        });
+    });
+    
+    </script>
