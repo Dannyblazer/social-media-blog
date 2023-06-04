@@ -1,27 +1,33 @@
 <script type="text/javascript">
-    blog_id = document.getElementById("comment").innerHTML
-    $(document).ready(function() {
-        $("#comment-form").on("submit", function(event) {
-            var form = $(this);
-            var url = "{% url 'blog:create_comment' 654546565 %}".replace("654546565", blog_id);
-            var data = form.serialize();
-    
-            $.ajax({
-                url: url,
-                type: "POST",
-                data: data,
-                success: function(response) {
-                    form.trigger("reset");
-                    $("#comment-section").prepend(response);
-                },
-                error: function(xhr) {
-                    console.log(xhr.responseText);
-                },
-                complete: function(data){
-                    
-                },
-            });
-        });
+    function blogIdGen(blog_Id){
+      blog_id = blog_Id;
+    }
+  
+            
+$(document).ready(function() {
+  $("#comment-form").on("submit", function(event) {
+    event.preventDefault(); // Prevent the default form submission behavior
+    document.getElementById('postee').click();
+    alert(blog_id)
+    var form = $(this);
+    var url =  "{% url 'blog:create_comment' 654546565 %}".replace("654546565", blog_id);// Retrieve the form's action URL
+    var data = form.serialize(); // Serialize the form data into a URL-encoded string
+
+    $.ajax({
+      url: url,
+      type: "POST",
+      data: data,
+      success: function(response) {
+        form.trigger("reset");
+        $("#comment-section").prepend(response);
+      },
+      error: function(xhr) {
+        // Handle the error response
+        console.log("Error creating comment:", xhr.responseText);
+      }
     });
+  });
+});
+
     
     </script>

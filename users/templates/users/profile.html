@@ -130,11 +130,11 @@
                                         {% endfor %}
                                     {% endif %}
                                         <form id="comment-form" method="post" action="" enctype="multipart/form-data">
-                                            {% csrf_token %}  
+                                            {% csrf_token %}
                                             <div class="form-group">
                                                 <input name="body" class="form-control" placeholder="Comment..." required >
                                             </div>
-                                            <button id="postee" class="submit btn btn-sm btn-primary btn-block" type="submit" onclick="">Post</button>
+                                            <button id="postee" class="submit btn btn-sm btn-primary btn-block" type="submit" onclick="blogIdGen({{blog_post.id}})">Post</button>
                                         </form>
                                     </div>
                                 </div>
