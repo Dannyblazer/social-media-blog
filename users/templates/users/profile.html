@@ -119,24 +119,25 @@
 
                                         </div>
                                     {% if blog_post.comment.all %}
+                                      <div id="commentsContainer">
                                         {% for com in blog_post.comment.all %}
                                         <div class="timeline-comment">
-                                            <div>
                                             <div class="timeline-comment-header">
                                                 <img src="{{com.author.profile_image.url}}" alt="Image Unavailable" />
-                                                <p>{{com.author.first_name}} <small>{{com.whenpublished}}</small></p>
+                                                <p>{{com.author.username}} <small>{{com.whenpublished}}</small></p>
                                             </div>
                                             <p class="timeline-comment-text">{{com.body}}</p>
-                                            </div>
                                         </div>
                                         {% endfor %}
+                                      </div>
+                                      <button id="refresher{{blog_post.id}}" class="d-none" hx-get="{% url 'blog:comments' blog_post.id %}" hx-target="#commentsContainer">Update Comments</button>
                                     {% endif %}
                                         <form id="comment-form" method="post" action="" enctype="multipart/form-data">
                                             {% csrf_token %}
                                             <div class="form-group">
                                                 <input name="body" class="form-control" placeholder="Comment..." required >
                                             </div>
-                                            <button id="postee" class="submit btn btn-sm btn-primary btn-block" type="submit" onclick="submitForm(event, {{blog_post.id}})">Post</button>
+                                            <button id="postee" class="submit btn btn-sm btn-primary btn-block" type="submit" onclick="submitForm(event, '{{blog_post.id}}')">Post</button>
                                         </form>
                                     </div>
                                 </div>

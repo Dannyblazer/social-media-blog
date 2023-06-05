@@ -128,67 +128,7 @@ def account_view(request, *args, **kwargs):
 
 def must_authenticate_view(request):
     return render(request, "users/must_authenticate.html", context={})
-
-def server_registration_view(request):
-    if not request.user.is_authenticated:
-        return redirect('users:must_authenicate')
-
-    form = ServerRegistrationForm(request.POST or None)
-    context = {}
-    if form.is_valid():
-        obj = form.save(commit=False)
-        account = Account.objects.filter(email=request.user.email).first()
-        obj.account = account
-        obj.save()
-        form = ServerRegistrationForm()
-        context["success_message"]= "Server Added"
     
-    context['form'] = form
-    
-    return render(request, 'users/add_server.html', context)
-
-def server_update_view(request, listz_id):
-    if not request.user.is_authenticated:
-        return redirect('users:must_authenticate')
-    server_id = Server.objects.get(pk=listz_id)
-    if request.user == server_id.account:
-        context = {}
-        serverz = get_object_or_404(Server, pk=listz_id)
-        context['serverz'] = serverz
-        return render(request, 'users/server_update_view.html', context)
-    return redirect('users:must_authenticate')
-
-
-def server_update(request, listz_id):
-    if not request.user.is_authenticated:
-        return redirect('users:must_authenticate')
-    server_id = Server.objects.get(pk=listz_id)
-    if request.user == server_id.account:
-        context = {}
-        if request.method == 'POST':
-            serverz = get_object_or_404(Server, pk=listz_id)
-            serverz.ip = request.POST['ip']
-            serverz.port = request.POST['port']
-            serverz.save()
-            context['serverz'] = serverz
-            context['success_message'] = "Server Updated"
-            return render(request, 'users/server_update_view.html', context)
-    
-    else:
-        context['success_message'] = "Update Failure"
-        return render(request, 'users/server_update.html', context)
-    
-def server_delete(request, listz_id):
-    if not request.user.is_authenticated:
-        return redirect('users:must_authenticate')
-    server_id = Server.objects.get(pk=listz_id)
-    if request.user == server_id.account:
-        context = {}
-        serverz = get_object_or_404(Server, pk=listz_id)
-        serverz.delete()
-        return redirect('users:account')
-    return redirect('users:must_authenticate')
-
 def edit_account(request, *args, **kwargs):
 	if not request.user.is_authenticated:
 		return redirect("users:must_authenticate")

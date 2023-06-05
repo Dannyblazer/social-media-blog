@@ -17,15 +17,57 @@
       success: function(response) {
         form.reset(); // Reset the form
         $("#timeline-comment"+blog_id).prepend(response); // Prepend the response to the comment section
-        location.reload()
+        
       },
       error: function(xhr) {
         console.log(xhr.responseText);
       },
       complete: function() {
         // Additional actions after the AJAX request is complete
+        var refresher = document.getElementById('refresher'+blog_id)
+        //refresher.click()
+        location.reload()
       },
     });
   }
 
+function appendComment(data){
+  owner = data['author']
+  message = data['message']
+  profile_image = data['profile_image']
+  timestemp = data['whenpublished']
+
+  createCommentsContainer(owner, message, profile_image, timestemp)
+
+}
+
+function createCommentsContainer(owner, message, profile_image, timestemp){
+  var newCommentDiv = document.createElement("div")
+  newCommentDiv.classList.add("commentsContainer")
+  // Start for looping
+  var timeline = document.createElement("div")
+  timeline.classList.add("timeline-comment")
+  var timelineComment = document.createElement("div")
+  timeline.classList.add("timeline-comment-header")
+  var image = document.createElement("img")
+  image.src = profile_image
+  image.alt = "Unavailable"
+  var author = document.createElement("p")
+  author.innerHTML = owner
+  var time = document.createElement("small")
+  time.innerHTML = timestemp
+
+  newCommentDiv.appendChild(timeline)
+  timeline.appendChild(timelineComment)
+  timelineComment.appendChild(image)
+  author.appendChild(time)
+  image.appendChild(author)
+
+  var body = document.createElement("p")
+  body.classList.add("timeline-comment-text")
+  body.innerHTML = message
+  timeline.appendChild(body)
+
+  // End for looping
+}
 </script>
