@@ -1,33 +1,31 @@
 <script type="text/javascript">
-    function blogIdGen(blog_Id){
-      blog_id = blog_Id;
-    }
-  
             
-$(document).ready(function() {
-  $("#comment-form").on("submit", function(event) {
-    event.preventDefault(); // Prevent the default form submission behavior
-    document.getElementById('postee').click();
-    alert(blog_id)
-    var form = $(this);
-    var url =  "{% url 'blog:create_comment' 654546565 %}".replace("654546565", blog_id);// Retrieve the form's action URL
-    var data = form.serialize(); // Serialize the form data into a URL-encoded string
+  function submitForm(event, blog_id) {
+    event.preventDefault(); // Prevent the default form submission
 
+    var form = event.target.form;
+    var url = "{% url 'blog:create_comment' 654546565 %}".replace("654546565", blog_id);
+    var data = new FormData(form);
+
+    // Perform the AJAX request here
     $.ajax({
       url: url,
       type: "POST",
       data: data,
+      processData: false,
+      contentType: false,
       success: function(response) {
-        form.trigger("reset");
-        $("#comment-section").prepend(response);
+        form.reset(); // Reset the form
+        $("#timeline-comment"+blog_id).prepend(response); // Prepend the response to the comment section
+        location.reload()
       },
       error: function(xhr) {
-        // Handle the error response
-        console.log("Error creating comment:", xhr.responseText);
-      }
+        console.log(xhr.responseText);
+      },
+      complete: function() {
+        // Additional actions after the AJAX request is complete
+      },
     });
-  });
-});
+  }
 
-    
-    </script>
+</script>
