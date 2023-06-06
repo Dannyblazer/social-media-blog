@@ -125,7 +125,8 @@ def comments(request, blog_post_id):
             'body': comment.body,
         })
 	# Return the serialized comments as JSON response
-	return JsonResponse(serialized_comments, safe=False)
+	return JsonResponse({'comments': serialized_comments})
+
 
 @login_required
 def delete_comment(request, com_id):

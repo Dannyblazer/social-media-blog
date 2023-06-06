@@ -119,7 +119,7 @@
 
                                         </div>
                                     {% if blog_post.comment.all %}
-                                      <div id="commentsContainer">
+                                      <div id="comment-section{{blog_post.id}}">
                                         {% for com in blog_post.comment.all %}
                                         <div class="timeline-comment">
                                             <div class="timeline-comment-header">
@@ -130,7 +130,6 @@
                                         </div>
                                         {% endfor %}
                                       </div>
-                                      <button id="refresher{{blog_post.id}}" class="d-none" hx-get="{% url 'blog:comments' blog_post.id %}" hx-target="#commentsContainer">Update Comments</button>
                                     {% endif %}
                                         <form id="comment-form" method="post" action="" enctype="multipart/form-data">
                                             {% csrf_token %}

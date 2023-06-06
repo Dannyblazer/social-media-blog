@@ -24,63 +24,61 @@
       },
       complete: function() {
         // Additional actions after the AJAX request is complete
-        var refresher = document.getElementById('refresher'+blog_id)
-        //refresher.click()
-        location.reload()
+        loadComments(blog_id);
+        alert('LoadComments called');
+
       },
     });
   }
 
-function appendComment(data){
-  owner = data['author']
-  message = data['message']
-  profile_image = data['profile_image']
-  timestemp = data['whenpublished']
 
-  createCommentsContainer(owner, message, profile_image, timestemp)
 
-}
 
-function createCommentsContainer(owner, message, profile_image, timestemp){
-  // Create the outer div for the comment
-  var commentDiv = document.createElement('div');
-  commentDiv.classList.add('timeline-comment');
+  // Function to generate HTML for a single comment
+  function generateCommentHTML(comment) {
+    var commentHTML = `
+      <div class="timeline-comment">
+        <div class="timeline-comment-header">
+          <img src="${comment.profile_image}" alt="Profile Image" />
+          <p>${comment.author} <small>${comment.whenpublished}</small></p>
+        </div>
+        <p class="timeline-comment-text">${comment.body}</p>
+      </div>
+    `;
+    return commentHTML;
+  }
 
-  // Create the inner div for the comment header
-  var headerDiv = document.createElement('div');
-  headerDiv.classList.add('timeline-comment-header');
+  // Function to append a new comment to the comment section
+  function appendCommentToSection(comment, blog_id) {
+    var commentSection = document.getElementById("comment-section"+blog_id);
+    commentSection.innerHTML = "";
+    var commentHTML = generateCommentHTML(comment);
+    commentSection.insertAdjacentHTML("beforeend", commentHTML);
+    alert('appendCalled!'+blog_id);
+  }
 
-  // Create the image element for the author's profile image
-  var profileImage = document.createElement('img');
-  profileImage.src = profile_image;
-  profileImage.alt = 'Image Unavailable';
+  // Function to load comments via AJAX
+  function loadComments(blog_id) {
+    // Make an AJAX request to the Django view URL
+    alert('loadComment Exec!')
+    $.ajax({
+      url: "{% url 'blog:comments' 2476568 %}".replace("2476568", blog_id),
+      type: "GET",
+      success: function(response) {
+        // Parse the response as JSON
+        var comments = JSON.parse(response);
 
-  // Create the paragraph element for the author's name and publication date
-  var authorParagraph = document.createElement('p');
-  authorParagraph.textContent = author + ' ';
-  
-  var smallElement = document.createElement('small');
-  smallElement.textContent = whenpublished;
-
-  // Append the small element to the author paragraph
-  authorParagraph.appendChild(smallElement);
-
-  // Append the profile image and author paragraph to the header div
-  headerDiv.appendChild(profileImage);
-  headerDiv.appendChild(authorParagraph);
-
-  // Create the paragraph element for the comment body
-  var bodyParagraph = document.createElement('p');
-  bodyParagraph.classList.add('timeline-comment-text');
-  bodyParagraph.textContent = message;
-
-  // Append the header div and body paragraph to the comment div
-  commentDiv.appendChild(headerDiv);
-  commentDiv.appendChild(bodyParagraph);
-
-  // Return the generated comment div
-  return commentDiv;
-}
+        // Iterate through the comments and append them to the comment section
+        comments.forEach(function(comment, blog_id) {
+          appendCommentToSection(comment, blog_id);
+          alert('Append passed!');
+        });
+      },
+      error: function(xhr) {
+        console.log(xhr.responseText);
+      }
+    });
+  }
 
 
 </script>
