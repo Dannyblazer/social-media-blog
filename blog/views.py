@@ -5,8 +5,8 @@ from blog.forms import CreateBlogPostForm, UpdateBlogPostForm, CommentForm
 from blog.models import BlogPost, Comment
 from django.http import HttpResponse, JsonResponse
 from django.db.models import Q
-# Create your views here.
-
+from .utils import LazyCommentsEncoder
+import json
 
 def create_blog_view(request):
 	context = {}
@@ -115,17 +115,10 @@ def create_comment(request, blog_id):
 def comments(request, blog_post_id):
 	blog_post = get_object_or_404(BlogPost, pk=blog_post_id)
 	comments = blog_post.comment.all()
-	
-	serialized_comments = []
-	for comment in comments:
-		serialized_comments.append({
-            'author': comment.author.username,
-            'profile_image': comment.author.profile_image.url,
-            'whenpublished': str(comment.whenpublished),
-            'body': comment.body,
-        })
-	# Return the serialized comments as JSON response
-	return JsonResponse({'comments': serialized_comments})
+	payload = {}
+	s = LazyCommentsEncoder()
+	payload['comments'] = s.serialize(comments.object_list)
+	return json.dump(payload['comments'])
 
 
 @login_required
