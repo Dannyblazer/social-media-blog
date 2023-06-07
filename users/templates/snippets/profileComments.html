@@ -67,7 +67,6 @@
       success: function(response) {
         // Parse the response as JSON
         var comments = JSON.parse(response);
-        console.log(comments)
         alert("Parsed without error!")
         // Iterate through the comments and append them to the comment section
         comments.forEach(function(comment, blog_id) {
