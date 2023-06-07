@@ -117,8 +117,8 @@ def comments(request, blog_post_id):
 	comments = blog_post.comment.all()
 	payload = {}
 	s = LazyCommentsEncoder()
-	payload['comments'] = s.serialize(comments.object_list)
-	return json.dump(payload['comments'])
+	payload['comments'] = s.serialize(comments)
+	return json.dumps(payload['comments'])
 
 
 @login_required
@@ -127,3 +127,4 @@ def delete_comment(request, com_id):
     blog_post = get_object_or_404(BlogPost, pk=commentz.blogpost.id)
     commentz.delete()
     return redirect('blog:detail', slug=blog_post.slug)
+
