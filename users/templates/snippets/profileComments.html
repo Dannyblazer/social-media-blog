@@ -25,7 +25,6 @@
       complete: function() {
         // Additional actions after the AJAX request is complete
         loadComments(blog_id);
-        alert('LoadComments called');
 
       },
     });
@@ -35,44 +34,45 @@
 
 
   // Function to generate HTML for a single comment
-  function generateCommentHTML(comment) {
+  function generateCommentHTML(comments) {
     var commentHTML = `
       <div class="timeline-comment">
         <div class="timeline-comment-header">
-          <img src="${comment.profile_image}" alt="Profile Image" />
-          <p>${comment.author} <small>${comment.whenpublished}</small></p>
+          <img src="${comments.profile_image}" alt="Profile Image" />
+          <p>${comments.author} <small>${comments.whenpublished}</small></p>
         </div>
-        <p class="timeline-comment-text">${comment.body}</p>
+        <p class="timeline-comment-text">${comments.body}</p>
       </div>
     `;
     return commentHTML;
   }
 
   // Function to append a new comment to the comment section
-  function appendCommentToSection(comment, blog_id) {
-    var commentSection = document.getElementById("comment-section"+blog_id);
-    commentSection.innerHTML = "";
-    var commentHTML = generateCommentHTML(comment);
+  function appendCommentToSection(comments) {
+    var commentSection = document.getElementById("comment-section"+comments.blog_id);
+    if(commentSection === null){
+      // location.reload()
+         var commentSection = document.createElement("div");
+        commentSection.id = "comment-section"+comments.blog_id;
+        var parent = document.getElementsByClassName("timeline-item-post")[0];
+        parent.insertAdjacentElement("beforeend", commentSection);
+      };
+      
+    var commentHTML = generateCommentHTML(comments);
     commentSection.insertAdjacentHTML("beforeend", commentHTML);
-    alert('appendCalled!'+blog_id);
+    
   }
 
   // Function to load comments via AJAX
   function loadComments(blog_id) {
     // Make an AJAX request to the Django view URL
-    alert('loadComment Exec!')
     $.ajax({
       url: "{% url 'blog:comments' 2476568 %}".replace("2476568", blog_id),
       type: "GET",
       success: function(response) {
-        // Parse the response as JSON
-        var comments = JSON.parse(response);
-        alert("Parsed without error!")
+        var comments = response
         // Iterate through the comments and append them to the comment section
-        comments.forEach(function(comment, blog_id) {
-          appendCommentToSection(comment, blog_id);
-          alert('Append passed!');
-        });
+        appendCommentToSection(comments)
       },
       error: function(xhr) {
         console.log(xhr.responseText);
