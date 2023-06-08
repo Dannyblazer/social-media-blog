@@ -112,15 +112,14 @@ def create_comment(request, blog_id):
 @login_required
 def comments(request, blog_post_id):
 	blog_post = get_object_or_404(BlogPost, pk=blog_post_id)
-	commentz = blog_post.comment.all()
-	comments = []
-	for comment in commentz:
-		comments.append({
-            'author': comment.author.first_name,
-            'profile_image': comment.author.profile_image.url,
-            'whenpublished': str(comment.whenpublished),
-            'body': comment.body,
-        })
+	commentz = blog_post.comment.all().last()
+	comments = {
+			'blog_id': commentz.blogpost.id,
+            'author': commentz.author.username,
+            'profile_image': commentz.author.profile_image.url,
+            'whenpublished': str(commentz.whenpublished()),
+            'body': commentz.body,
+        }
 	
 	return JsonResponse(comments, safe=False)
 
