@@ -32,6 +32,7 @@
         margin-bottom: 10px;
         font-family:'Courier New', Courier, monospace;
     }
+    
     .commented-section{
         position: relative;
         background-color: rgb(229, 241, 237);
@@ -89,19 +90,19 @@
                         <div class="form-group">
                             <input name="body" class="form-control" placeholder="Comment..." required >
                         </div>
-                        <button id="postee" class="submit btn btn-sm btn-primary btn-block" type="submit">Post</button>
+                        <button id="postee" class="submit btn btn-sm btn-primary btn-block" type="submit" onclick="submitForm(event, '{{blog_post.id}}')">Post</button>
                     </form>
                   </div>
                 {% else %}
                     {% for coms in blog_comments%}
-                    <div class="commented-section mt-2">
+                    <div id="comment-section-div{{coms.id}}" class="commented-section mt-2">
                         <div class="d-flex flex-row align-items-center commented-user">
                             <h5 class="mr-2"><strong>{{ coms.author.username }}</strong>: {{coms.whenpublished}} </h5>
                         </div>
                         <div class="comment-text"><span>{{ coms.body }}</span></div>
                         <div class="reply-section">
                             <div class="d-flex flex-row align-items-center deleting"><span class="dot ml-2"></span>
-                                <h6 class="ml-2 mt-1">{% if coms.author == request.user %}<a href="{% url 'blog:delete_comment' coms.pk %}">Delete</a> {% endif %}</h6>
+                                <h6 class="ml-2 mt-1">{% if coms.author == request.user %}<a onclick="deleteComment('{{coms.pk}}')">Delete</a> {% endif %}</h6>
                             </div>
                         </div>
                     </div>
@@ -113,7 +114,7 @@
                         <div class="form-group">
                             <input name="body" class="form-control" placeholder="Comment..." required >
                         </div>
-                        <button id="postee" class="submit btn btn-sm btn-primary btn-block" type="submit">Post</button>
+                        <button id="postee" class="submit btn btn-sm btn-primary btn-block" type="submit" onclick="submitForm(event, '{{blog_post.id}}')">Post</button>
                     </form>
                   </div>
             {% endif %}
