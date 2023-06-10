@@ -1,27 +1,105 @@
 <script type="text/javascript">
-
-$(document).ready(function() {
-    $("#comment-form").on("submit", function(event) {
-        var form = $(this);
-        var url = "{% url 'blog:create_comment' blog_id %}";
-        var data = form.serialize();
-
-        $.ajax({
-            url: url,
-            type: "POST",
-            data: data,
-            success: function(response) {
-                form.trigger("reset");
-                $("#comment-section").prepend(response);
-            },
-            error: function(xhr) {
-                console.log(xhr.responseText);
-            },
-            complete: function(data){
+            
+            function submitForm(event, blog_id) {
+              event.preventDefault(); // Prevent the default form submission
+          
+              var form = event.target.form;
+              var url = "{% url 'blog:create_comment' 654546565 %}".replace("654546565", blog_id);
+              var data = new FormData(form);
+          
+              // Perform the AJAX request here
+              $.ajax({
+                url: url,
+                type: "POST",
+                data: data,
+                processData: false,
+                contentType: false,
+                success: function(response) {
+                  form.reset(); // Reset the form
+                  $("#timeline-comment"+blog_id).prepend(response); // Prepend the response to the comment section
+                  
+                },
+                error: function(xhr) {
+                  console.log(xhr.responseText);
+                },
+                complete: function() {
+                  // Additional actions after the AJAX request is complete
+                  loadComments(blog_id);
+          
+                },
+              });
+            }
+          
+          
+          
+          
+            // Function to generate HTML for a single comment
+            function generateCommentHTML(coms) {
+              var commentHTML = `
+                    <div id="comment-section-div${coms.id}" class="commented-section mt-2">
+                        <div class="d-flex flex-row align-items-center commented-user">
+                            <h5 class="mr-2"><strong>${coms.author}</strong>: ${coms.whenpublished} </h5>
+                        </div>
+                        <div class="comment-text"><span>${coms.body}</span></div>
+                        <div class="reply-section">
+                            <div class="d-flex flex-row align-items-center deleting"><span class="dot ml-2"></span>
+                                <h6 class="ml-2 mt-1"> {% if coms.author == request.user %} <a href="{% url 'blog:delete_comment' coms.pk %}"> Delete </a> {% endif %}</h6>
+                            </div>
+                        </div>
+                    </div>
+              `;
+              return commentHTML;
+            }
+          
+            // Function to append a new comment to the comment section
+            function appendCommentToSection(comments) {
+              var commentSection = document.getElementById("comment-section-div"+comments.blog_id);
+              if(commentSection === null){
+                // location.reload()
+                   var commentSection = document.createElement("div");
+                  commentSection.id = "comment-section-div"+comments.blog_id;
+                  var parent = document.getElementById("commentos");
+                  parent.insertAdjacentElement("beforeend", commentSection);
+                };
                 
-            },
-        });
-    });
-});
+              var commentHTML = generateCommentHTML(comments);
+              commentSection.insertAdjacentHTML("beforeend", commentHTML);
+              
+            }
+          
+            // Function to load comments via AJAX
+            function loadComments(blog_id) {
+              // Make an AJAX request to the Django view URL
+              $.ajax({
+                url: "{% url 'blog:comments' 2476568 %}".replace("2476568", blog_id),
+                type: "GET",
+                success: function(response) {
+                  var comments = response
+                  // Iterate through the comments and append them to end of the comment section
+                  appendCommentToSection(comments)
+                },
+                error: function(xhr) {
+                  console.log(xhr.responseText);
+                }
+              });
+            }
 
+            // function to dynamically delete comments
+            function deleteComment(comment_id){
+
+                $.ajax({
+                url: "{% url 'blog:delete_comment' 2476568 %}".replace("2476568", comment_id),
+                type: "GET",
+                success: function(response) {
+                    var commentSection = document.getElementById("comment-section-div"+comment_id);
+                    commentSection.innerHTML = "";
+                    commentSection.classList = "";
+                },
+                error: function(xhr) {
+                  console.log(xhr.responseText);
+                }
+              });
+
+            }
+          
 </script>
