@@ -36,14 +36,14 @@
             // Function to generate HTML for a single comment
             function generateCommentHTML(coms) {
               var commentHTML = `
-                    <div id="comment-section-div${coms.id}" class="commented-section mt-2">
+                    <div id="comment-section-div${coms.pk}" class="commented-section mt-2">
                         <div class="d-flex flex-row align-items-center commented-user">
                             <h5 class="mr-2"><strong>${coms.author}</strong>: ${coms.whenpublished} </h5>
                         </div>
                         <div class="comment-text"><span>${coms.body}</span></div>
                         <div class="reply-section">
                             <div class="d-flex flex-row align-items-center deleting"><span class="dot ml-2"></span>
-                                <h6 class="ml-2 mt-1"> {% if coms.author == request.user %} <a href="{% url 'blog:delete_comment' coms.pk %}"> Delete </a> {% endif %}</h6>
+                                <h6 class="ml-2 mt-1"><button class="btn btn-sm" onclick="deleteComment(${coms.pk})"> Delete </button></h6>
                             </div>
                         </div>
                     </div>
@@ -53,11 +53,11 @@
           
             // Function to append a new comment to the comment section
             function appendCommentToSection(comments) {
-              var commentSection = document.getElementById("comment-section-div"+comments.blog_id);
+              var commentSection = document.getElementById("comment-section-div"+comments.pk);
               if(commentSection === null){
                 // location.reload()
                    var commentSection = document.createElement("div");
-                  commentSection.id = "comment-section-div"+comments.blog_id;
+                  commentSection.id = "comment-section-div"+comments.pk;
                   var parent = document.getElementById("commentos");
                   parent.insertAdjacentElement("beforeend", commentSection);
                 };

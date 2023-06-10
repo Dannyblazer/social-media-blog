@@ -115,6 +115,7 @@ def comments(request, blog_post_id):
 	commentz = blog_post.comment.all().last()
 	comments = {
 			'blog_id': commentz.blogpost.id,
+			'pk': commentz.id,
             'author': commentz.author.username,
             'profile_image': commentz.author.profile_image.url,
             'whenpublished': str(commentz.whenpublished()),
@@ -132,4 +133,3 @@ def delete_comment(request, com_id):
 	    'dom': 'fdvsjv'
 	}
     return JsonResponse(comment, safe=False)
-
