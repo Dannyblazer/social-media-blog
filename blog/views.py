@@ -120,13 +120,16 @@ def comments(request, blog_post_id):
             'whenpublished': str(commentz.whenpublished()),
             'body': commentz.body,
         }
+	print(request.user)
 	
 	return JsonResponse(comments, safe=False)
 
 @login_required
 def delete_comment(request, com_id):
     commentz = Comment.objects.get(id=com_id)
-    blog_post = get_object_or_404(BlogPost, pk=commentz.blogpost.id)
     commentz.delete()
-    return redirect('blog:detail', slug=blog_post.slug)
+    comment = {
+	    'dom': 'fdvsjv'
+	}
+    return JsonResponse(comment, safe=False)
 
