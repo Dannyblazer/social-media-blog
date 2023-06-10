@@ -106,16 +106,16 @@
                                         <p>{{blog_post.author.first_name}} <span>made a post</span></p>
                                         <small>{{blog_post.whenpublished}}</small>
                                     </div>
-                                    <div class="timeline-item-post">
+                                    <div class="timeline-item-post{{blog_post.id}}">
                                         <p>{{blog_post.body}}</p>
                                         <div class="timeline-options">
                                             {% if request.user.is_authenticated %}
                                                <div>
                                                 {% include "blog/snippets/blog_like.html" %}
                                                </div>
-                                            {%else%}
+                                            {% else %}
                                             <a href="{% url 'users:must_authenticate' %}"><i class="fa fa-thumbs-up"></i> Like <span class="w3-badge w3-blue">{{ blog_post.likes.count }}</a>
-                                            {%endif%}
+                                            {% endif %}
 
                                         </div>
                                     {% if blog_post.comment.all %}
