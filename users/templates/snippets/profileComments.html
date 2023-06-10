@@ -54,7 +54,7 @@
       // location.reload()
          var commentSection = document.createElement("div");
         commentSection.id = "comment-section"+comments.blog_id;
-        var parent = document.getElementsByClassName("timeline-item-post")[0];
+        var parent = document.getElementsByClassName("timeline-item-post"+comments.blog_id)[0];
         parent.insertAdjacentElement("beforeend", commentSection);
       };
       
