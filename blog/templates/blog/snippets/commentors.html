@@ -59,11 +59,11 @@
                    var commentSection = document.createElement("div");
                   commentSection.id = "comment-section-div"+comments.pk;
                   var parent = document.getElementById("commentos");
-                  parent.insertAdjacentElement("beforeend", commentSection);
+                  parent.insertAdjacentElement("afterbegin", commentSection);
                 };
                 
               var commentHTML = generateCommentHTML(comments);
-              commentSection.insertAdjacentHTML("beforeend", commentHTML);
+              commentSection.insertAdjacentHTML("afterbegin", commentHTML);
               
             }
           
