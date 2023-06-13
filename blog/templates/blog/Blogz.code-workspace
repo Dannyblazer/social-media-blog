@@ -3,5 +3,10 @@
         {
             "path": "../../.."
         }
-    ]
+    ],
+    "settings": {
+        "githubPullRequests.ignoredPullRequestBranches": [
+            "master"
+        ]
+    }
 }

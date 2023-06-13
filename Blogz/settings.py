@@ -42,14 +42,15 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.humanize',
+    'django.contrib.sites',
     'django_htmx',
     'channels',
 
-    #'allauth',
+    'allauth',
 
-    #'allauth.account',
-    #'allauth.socialaccount',
-    #'allauth.socialaccount.providers.google', #Google Authentication
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.google', #Google Authentication
 
     'rest_framework',
     'rest_framework.authtoken',
@@ -107,6 +108,7 @@ REST_FRAMEWORK = {
 AUTH_USER_MODEL = 'users.Account'
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.AllowAllUsersModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
     'users.backends.CaseInsensitiveModelBackend'
 )
 
@@ -165,6 +167,26 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+SITE_ID = 1
+LOGIN_REDIRECT_URL = '/'
+
+# Additional configuration settings
+SOCIALACCOUNT_QUERY_EMAIL = True
+ACCOUNT_LOGOUT_ON_GET= True
+ACCOUNT_UNIQUE_EMAIL = True
+ACCOUNT_EMAIL_REQUIRED = True
+
+SOCIALACCOUNT_PROVIDERS = {
+    'google': {
+        'SCOPE': [
+            'profile',
+            'email',
+        ],
+        'AUTH_PARAMS': {
+            'access_type': 'online',
+        }
+    }
+}
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.1/topics/i18n/
