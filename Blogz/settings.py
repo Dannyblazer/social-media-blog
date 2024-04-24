@@ -46,11 +46,11 @@ INSTALLED_APPS = [
     'django_htmx',
     'channels',
 
-    'allauth',
+    #'allauth',
 
-    'allauth.account',
-    'allauth.socialaccount',
-    'allauth.socialaccount.providers.google', #Google Authentication
+    #'allauth.account',
+    #'allauth.socialaccount',
+    #'allauth.socialaccount.providers.google', #Google Authentication
 
     'rest_framework',
     'rest_framework.authtoken',
@@ -108,7 +108,7 @@ REST_FRAMEWORK = {
 AUTH_USER_MODEL = 'users.Account'
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.AllowAllUsersModelBackend',
-    'allauth.account.auth_backends.AuthenticationBackend',
+    #'allauth.account.auth_backends.AuthenticationBackend',
     'users.backends.CaseInsensitiveModelBackend'
 )
 
@@ -118,9 +118,9 @@ WSGI_APPLICATION = 'Blogz.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
-DB_NAME = "django_chatapp"
-DB_USER = "django"
-DB_PASSWORD = "Chocolateboy"
+DB_NAME = "taskitly_db2"
+DB_USER = "taskitly2"
+DB_PASSWORD = "taskitlyforlife"
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
