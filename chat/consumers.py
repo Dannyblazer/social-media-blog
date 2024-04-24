@@ -291,7 +291,6 @@ def get_room_or_error2(room_id, user):
              raise Exception("You must be friends to chat.")
     return room
 
-import json
 
 def get_user_info(room, user):
     """
