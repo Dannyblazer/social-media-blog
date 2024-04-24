@@ -1,0 +1,6 @@
+# created by virtualenv automatically
+env/
+/static_cdn/
+/static/
+/media_cdn/
+/media/
