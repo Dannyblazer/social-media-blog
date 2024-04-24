@@ -4,3 +4,6 @@ env/
 /static/
 /media_cdn/
 /media/
+/public_chat/__pycache__/
+/blog/__pycache__/
+/chat/__pycache__/
